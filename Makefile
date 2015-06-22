@@ -1,5 +1,7 @@
 CFLAGS = -O3
 
+all: landscape JavaGUI
+
 landscape: diamond_square.o hill_algorithm.o perlin_noise.o landscape.o
 	g++ $(CFLAGS) diamond_square.o landscape.o hill_algorithm.o perlin_noise.o -o landscape
 	
@@ -15,7 +17,11 @@ perlin_noise.o: perlin_noise.h perlin_noise.cpp
 landscape.o: landscape.cpp
 	g++ $(CFLAGS) landscape.cpp -c
 	
+JavaGUI: JavaGUI.java
+	gcj --main=JavaGUI JavaGUI.java -o JavaGUI
+	
 clean:
 	rm -f *.o
+	rm -f *.class
 	rm -f output/*.png
-	rm -f landscape
+	rm -f landscape JavaGUI

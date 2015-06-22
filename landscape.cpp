@@ -129,7 +129,7 @@ void printLandscape(landscapeCell *landscape, int mapSize, const string &outputN
 	if (strcmp(argv[i], desc) == 0) { \
 		val = argv[++i]; \
 		continue; \
-	}
+	}	
 
 int main(int argc, char **argv) {
 	for (int i = 0; i < argc; i++) {

@@ -4,6 +4,7 @@
 import Tkinter
 
 def getColorFromInt(c):
+	c = int(c)
 	if c < -40:
 		return '#000020'
 	elif c < -10:
@@ -40,17 +41,22 @@ class simpleapp_tk(Tkinter.Tk):
 		self.resizable(True,True)
 		self.update()
 		self.geometry(self.geometry())
+		self.image = Tkinter.PhotoImage(width = 512, height = 512)
 
 	def loadFile(self):
 		f = open('1.txt', 'r')
 		len = int(f.readline())
-		nl = 0
+		self.image = Tkinter.PhotoImage(width = len, height = len)
+		i = 0
 		for line in f:
-			nc = 0
-			for i in line.split():
-				self.canvas.create_line(nc, nl, nc, nl + 1, fill = getColorFromInt(int(i)))
-				nc += 1
-			nl += 1
+			j = 0
+			for c in line.split():
+				self.image.put(getColorFromInt(c), (i, j))
+				#self.canvas.create_line(i, j, i, j + 1, fill = getColorFromInt(c))
+				j += 1
+			i += 1
+			
+		self.canvas.create_image(0, 0, image = self.image, anchor=Tkinter.NW)
 
 	def OnPressEnter(self,event):
 		self.labelVariable.set( self.entryVariable.get()+" (You pressed ENTER)" )
@@ -61,3 +67,4 @@ if __name__ == "__main__":
 	app = simpleapp_tk(None)
 	app.title('Landscape python GUI')
 	app.mainloop()
+	
