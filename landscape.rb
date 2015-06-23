@@ -2,7 +2,6 @@
 require 'chunky_png'
 
 def intToColor(color)
-#return ChunkyPNG::Color.rgba(128 + color, 128 + color, 128 + color, 255)
 	if color < -40
 		return ChunkyPNG::Color.rgba(0, 0, 32, 255)
 	elsif color < -10
@@ -30,7 +29,7 @@ def makePNG(filename)
 	size.times do |i| 
 		strings = f.readline.split(' ')
 		size.times do |j| 
-			png[i,j] = intToColor(strings[j].to_i)
+			png[j,i] = intToColor(strings[j].to_i)
 		end
 	end 
 	return png.to_blob;

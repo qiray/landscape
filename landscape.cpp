@@ -110,7 +110,7 @@ void printLandscape(landscapeCell *landscape, int mapSize, const string &outputN
 				cout << (int)landscape[j + i*mapSize] << " ";
 			cout << endl;
 		}
-	}	
+	}
 }
 
 #define PARSE_INT(desc, val) \
