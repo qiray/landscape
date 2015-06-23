@@ -72,6 +72,19 @@ public class JavaGUI extends JPanel {
 		textField = new JTextField(20);
 		textField.setText("1.txt");
 		this.add(textField);
+		try {
+			Runtime r = Runtime.getRuntime();
+			Process p = r.exec("uname -a");
+			p.waitFor();
+			BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = "";
+			while ((line = b.readLine()) != null) {
+				System.out.println(line);
+			}
+			b.close();
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace(); 
+		}
 	}	
 	
 	public void paintComponent(Graphics g) {
