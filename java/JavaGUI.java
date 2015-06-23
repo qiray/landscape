@@ -29,7 +29,7 @@ public class JavaGUI extends JPanel {
 	}
 	
 	private void loadMap(String fileName) {
-		System.out.println("Loading map...");
+		System.out.println("Loading map " + fileName);
 		try {
 			File file = new File(fileName);
 			FileReader fr = new FileReader(file); 
@@ -76,13 +76,14 @@ public class JavaGUI extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(this.img, 0, 0, null);
+		g.drawImage(this.img, 0, 30, null);
 	}
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		frame.setTitle("Java landsacpe GUI");
-		frame.setSize(512, 512);
+		frame.setSize(512, 582);
+		frame.setMinimumSize(new Dimension(512, 582));
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
