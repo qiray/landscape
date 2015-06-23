@@ -8,16 +8,7 @@ import java.awt.image.*;
 public class JavaGUI extends JPanel {
 
 	Image img;
-	
-	static {
-		try {
-			System.loadLibrary("loadMap");
-		} catch (UnsatisfiedLinkError e) {
-			System.err.println("Native code library failed to load.\n" + e);
-		}
-	}
-
-	private native int[] loadMap(String fileName);
+	JTextField textField;
 
 	public Color getColorFromInt(int c) {
 		if (c < -40)
@@ -37,9 +28,8 @@ public class JavaGUI extends JPanel {
 		return new Color(255, 255, 255);
 	}
 	
-	public JavaGUI() {
-		String fileName = "1.txt";
-		System.out.println("init");
+	private void loadMap(String fileName) {
+		System.out.println("Loading map...");
 		try {
 			File file = new File(fileName);
 			FileReader fr = new FileReader(file); 
@@ -64,9 +54,24 @@ public class JavaGUI extends JPanel {
 			fr.close();
 			br.close();
 			img = createImage(new MemoryImageSource(len, len, mem, 0, len));
+			System.out.println("Done");
 		} catch (IOException e) {
 			e.printStackTrace(); 
 		}
+	}
+	
+	public JavaGUI() {
+		JButton button = new JButton("Load file");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loadMap(textField.getText());
+				repaint();
+			}
+		});
+		this.add(button);
+		textField = new JTextField(20);
+		textField.setText("1.txt");
+		this.add(textField);
 	}	
 	
 	public void paintComponent(Graphics g) {
