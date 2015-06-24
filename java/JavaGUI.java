@@ -94,7 +94,7 @@ public class JavaGUI extends JPanel {
 			String LandscapeGeneratorName = "./landscape";
 			System.out.println("Running " + LandscapeGeneratorName + arguments);
 			Runtime r = Runtime.getRuntime();
-			Process p = r.exec(LandscapeGeneratorName + arguments);
+			Process p = r.exec(LandscapeGeneratorName + arguments, null, new File("."));
 			p.waitFor();
 			BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line = "";
@@ -135,7 +135,7 @@ public class JavaGUI extends JPanel {
 		
 		mapNameTextField = new JTextField(20);
 		mapNameTextField.addActionListener(action);
-		mapNameTextField.setText("1.txt");
+		mapNameTextField.setText("1.map");
 		mapNameTextField.setBounds(372, 0, 120, 25);
 		this.add(mapNameTextField);
 		
