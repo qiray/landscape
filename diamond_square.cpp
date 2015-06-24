@@ -42,6 +42,8 @@ void generateDiamondSquareHeights(float *heights, int mapSize, int initHeight, f
 	int len = mapSize*mapSize;
 	for (int i = 0; i < len; i++)
 		heights[i] = 0;
+	if (initHeight == 0)
+		initHeight = 1;
 	heights[leftX + mapSize*topY] = rand()%initHeight; //init random heights
 	heights[rightX + mapSize*topY] = rand()%initHeight;
 	heights[leftX + mapSize*bottomY] = rand()%initHeight;

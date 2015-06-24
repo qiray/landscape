@@ -186,7 +186,7 @@ public class JavaGUI extends JPanel {
 		JFrame frame = new JFrame();
 		frame.setTitle("Landsacpe GUI");
 		frame.setSize(770, 582);
-		frame.setLocation(200, 200);
+		//frame.setLocation(200, 200);
 		frame.setMinimumSize(new Dimension(770, 582));
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
