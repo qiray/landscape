@@ -8,7 +8,8 @@ import java.awt.image.*;
 public class JavaGUI extends JPanel {
 
 	Image img;
-	JTextField textField;
+	JTextField mapNameTextField, seedTextField, startHeightTextField, roughnessTextField, islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField;
+	JComboBox<String> algoritmsList;
 
 	public Color getColorFromInt(int c) {
 		if (c < -40)
@@ -59,22 +60,41 @@ public class JavaGUI extends JPanel {
 			e.printStackTrace(); 
 		}
 	}
+
+	private String makeArguments() {
+		String result = " --size 512 --noise --output " + mapNameTextField.getText() + " --algorithm ";
+		switch (algoritmsList.getSelectedIndex()) {
+			case 1:
+				result += "hill_algorithm ";
+				break;
+			case 2:
+				result += "perlin_noise ";
+				break;
+			case 0:
+			default:
+				result += "diamond_square ";
+		}
+		String temp = seedTextField.getText();
+		result += "--seed ";
+		if (temp.equals(""))
+			result += (int)(Math.random()*2147483647) + " ";
+		else
+			result += Integer.parseInt(temp) + " ";
+		result += "--height " + Integer.parseInt(startHeightTextField.getText()) + " ";
+		result += "--roughness " + Float.parseFloat(roughnessTextField.getText()) + " ";
+		result += "--islands " + Integer.parseInt(islandsTextField.getText()) + " ";
+		result += "--amplitude " + Float.parseFloat(amplitudeTextField.getText()) + " ";
+		result += "--persistence " + Float.parseFloat(persistenceTextField.getText()) + " ";
+		result += "--frequency " + Float.parseFloat(frequencyTextField.getText()) + " ";
+		return result;
+	}
 	
-	public JavaGUI() {
-		JButton button = new JButton("Load file");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadMap(textField.getText());
-				repaint();
-			}
-		});
-		this.add(button);
-		textField = new JTextField(20);
-		textField.setText("1.txt");
-		this.add(textField);
+	private void runLandscapeGenerator(String arguments) {
 		try {
+			String LandscapeGeneratorName = "./landscape";
+			System.out.println("Running " + LandscapeGeneratorName + arguments);
 			Runtime r = Runtime.getRuntime();
-			Process p = r.exec("uname -a");
+			Process p = r.exec(LandscapeGeneratorName + arguments);
 			p.waitFor();
 			BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line = "";
@@ -85,6 +105,76 @@ public class JavaGUI extends JPanel {
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace(); 
 		}
+	}
+	
+	private JTextField makeLabelText(String labelText, int x, int y, int w, int h, String fieldText, int fieldX, int fieldY, int fieldWidth) {
+		JLabel label = new JLabel(labelText);
+		label.setBounds(x, y, w, h);
+		this.add(label);
+		JTextField textField = new JTextField(20);
+		textField.setText(fieldText);
+		textField.setBounds(fieldX, fieldY, fieldWidth, h);
+		this.add(textField);
+		return textField;
+	}
+	
+	public JavaGUI() {
+		this.setLayout(null);
+		Action action = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadMap(mapNameTextField.getText());
+				repaint();
+			}
+		};
+		
+		JButton button = new JButton("Load file");
+		button.addActionListener(action);
+		button.setBounds(20, 0, 120, 25);
+		this.add(button);
+		
+		mapNameTextField = new JTextField(20);
+		mapNameTextField.addActionListener(action);
+		mapNameTextField.setText("1.txt");
+		mapNameTextField.setBounds(372, 0, 120, 25);
+		this.add(mapNameTextField);
+		
+		JLabel algorithmLabel = new JLabel("Algorithm:");
+		algorithmLabel.setBounds(520, 0, 80, 25);
+		this.add(algorithmLabel);
+		String[] algoritmsTexts = {
+			"Diamond square",
+			"Hill algorithm",
+			"Perlin noise",
+		};
+		algoritmsList = new JComboBox<>(algoritmsTexts);
+		algoritmsList.setBounds(600, 0, 150, 25);
+		this.add(algoritmsList);
+		
+		seedTextField = makeLabelText("Seed (empty for random):", 520, 30, 220, 25, "", 520, 60, 230);
+		roughnessTextField = makeLabelText("Roughness:", 520, 90, 100, 25, "0.2", 650, 90, 100);
+		islandsTextField = makeLabelText("Islands (hill algorithm):", 520, 120, 230, 25, "4", 700, 120, 50);
+		startHeightTextField = makeLabelText("Init height (diamond square):", 520, 150, 230, 25, "5", 520, 180, 230);
+		
+		JLabel perlinHillInfoLabel = new JLabel("Perlin noise algorithm only:");
+		perlinHillInfoLabel.setBounds(520, 210, 230, 25);
+		this.add(perlinHillInfoLabel);
+		
+		amplitudeTextField = makeLabelText("Amplitude:", 520, 240, 100, 25, "0.25", 630, 240, 120);
+		persistenceTextField = makeLabelText("Persistence:", 520, 270, 100, 25, "0.7", 630, 270, 120);
+		frequencyTextField = makeLabelText("Frequency:", 520, 300, 100, 25, "0.01", 630, 300, 120);
+		
+		JButton generateLandscapeButton = new JButton("Generate landscape");
+		generateLandscapeButton.addActionListener(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				runLandscapeGenerator(makeArguments());
+				loadMap(mapNameTextField.getText());
+				repaint();
+			}
+		});
+		generateLandscapeButton.setBounds(520, 330, 230, 25);
+		this.add(generateLandscapeButton);
 	}	
 	
 	public void paintComponent(Graphics g) {
@@ -94,9 +184,10 @@ public class JavaGUI extends JPanel {
 	
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.setTitle("Java landsacpe GUI");
-		frame.setSize(512, 582);
-		frame.setMinimumSize(new Dimension(512, 582));
+		frame.setTitle("Landsacpe GUI");
+		frame.setSize(770, 582);
+		frame.setLocation(200, 200);
+		frame.setMinimumSize(new Dimension(770, 582));
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);

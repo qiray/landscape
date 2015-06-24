@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <string>
 #include <cmath>
+#include <time.h>
 #include "diamond_square.h"
 #include "hill_algorithm.h"
 #include "perlin_noise.h"
@@ -21,7 +22,7 @@ using namespace std;
 namespace landscapeAlgorithm {
 	const string diamond_square = "diamond_square";
 	const string hill_algorithm = "hill_algorithm";
-	const string perlin_noise = "perlin_noise";	
+	const string perlin_noise = "perlin_noise";
 	string currentAlgorithm = "diamond_square"; //default value
 	void checkAlgorithm() {
 		if (currentAlgorithm != diamond_square && currentAlgorithm != hill_algorithm && currentAlgorithm != perlin_noise)
