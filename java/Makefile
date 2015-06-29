@@ -1,5 +1,5 @@
 
-all: JavaGUI.class cppJavaGUI.class libloadMap.so
+all: JavaGUI.class
 	
 JavaGUI.class: JavaGUI.java
 	javac JavaGUI.java

@@ -5,49 +5,28 @@
 #include <string>
 #include <cmath>
 #include <time.h>
+#include "landscape.h"
 #include "diamond_square.h"
 #include "hill_algorithm.h"
 #include "perlin_noise.h"
+#include "rivers_generator.h"
 
 using namespace std;
 
-//sizes: //TODO: use these sizes
-#define TINY 1
-#define SMALL 2
-#define NORMAL 3
-#define BIG 4
-#define LARGE 5
+string landscapeAlgorithm::currentAlgorithm = "diamond_square"; //default value
 
-//algorithms:
-namespace landscapeAlgorithm {
-	const string diamond_square = "diamond_square";
-	const string hill_algorithm = "hill_algorithm";
-	const string perlin_noise = "perlin_noise";
-	string currentAlgorithm = "diamond_square"; //default value
-	void checkAlgorithm() {
-		if (currentAlgorithm != diamond_square && currentAlgorithm != hill_algorithm && currentAlgorithm != perlin_noise)
-			currentAlgorithm = diamond_square;
-	}
-}
-
-typedef char landscapeCell;
-#define MAX_LANDSCAPE_CELL 127
-
-namespace terrain {
-	const landscapeCell deepWater = -32;
-	const landscapeCell water = 0;
-	const landscapeCell coast = 1;
-	const landscapeCell hill = 32;
-	const landscapeCell highland = 64;
-	const landscapeCell everest = 96;
+void landscapeAlgorithm::checkAlgorithm() {
+	if (currentAlgorithm != diamond_square && currentAlgorithm != hill_algorithm && currentAlgorithm != perlin_noise)
+		currentAlgorithm = diamond_square;
 }
 
 string outputName("");
-int mapSize = 15, numberOfIslands = 1, islandSize = NORMAL;
+int mapSize = 16, numberOfIslands = 1, islandSize = NORMAL;
 int randomSeed = 0, startHeight = 5;
 float roughness = 0.1, outHeight = -5;
 float persistence = 0.1, frequency = 0.1, amplitude = 0.1;
 int hillNoise = 0;
+int rivers_number = 10, river_length = 100;
 
 float minMaxRandom(float min, float max) {
 	return min + rand()/(RAND_MAX/(max - min));
@@ -60,7 +39,7 @@ inline int nearestPower2(int n) {
 	return i;
 }
 
-void generateIslands(landscapeCell *landscape, int mapSize, int height, float roughness, float outHeight, int numberOfIslands, int islandSize) {
+void generateHeights(landscapeCell *landscape, int mapSize, int height, float roughness, float outHeight, int numberOfIslands, int islandSize) {
 	int length = mapSize*mapSize;
 	int heightsLength = (mapSize + 1)*(mapSize + 1);
 	float * heights = new float [heightsLength];
@@ -86,7 +65,8 @@ void generateIslands(landscapeCell *landscape, int mapSize, int height, float ro
 }
 
 void generateLandscape(landscapeCell *landscape, int mapSize, int height, float roughness, float outHeight, int numberOfIslands, int islandSize) {
-	generateIslands(landscape, mapSize, height, roughness, outHeight, numberOfIslands, islandSize);
+	generateHeights(landscape, mapSize, height, roughness, outHeight, numberOfIslands, islandSize);
+	generateRivers(landscape, mapSize, rivers_number, river_length, 5);
 }
 
 void printLandscape(landscapeCell *landscape, int mapSize, const string &outputName) {
@@ -146,6 +126,8 @@ int main(int argc, char **argv) {
 		PARSE_FLOAT("--amplitude", amplitude);
 		PARSE_FLOAT("--persistence", persistence);
 		PARSE_FLOAT("--frequency", frequency);
+		PARSE_FLOAT("--rivers_number", rivers_number);
+		PARSE_FLOAT("--river_length", river_length);
 		if (strcmp(argv[i], "--noise") == 0) {
 			hillNoise = 1;
 			continue;
