@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -33,5 +34,7 @@ namespace terrain {
 	const landscapeCell highland = 64;
 	const landscapeCell everest = 96;
 }
+
+extern vector<vector<int> > rivers;
 
 #endif

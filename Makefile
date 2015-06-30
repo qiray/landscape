@@ -39,6 +39,6 @@ JavaGUI: $(JAVA_GUI_PATH)/*.java
 	
 clean:
 	rm -f *.o *.class
-	rm -f $(OUTPUT_PATH)/*.png
+	rm -f $(OUTPUT_PATH)/*
 	rm -f landscape landscape.exe JavaGUI $(JAVA_GUI_PATH)/landscape $(JAVA_GUI_PATH)/landscape.exe
 	cd $(JAVA_GUI_PATH) && make clean && cd ..
