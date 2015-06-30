@@ -27,7 +27,7 @@ int randomSeed = 0, startHeight = 5;
 float roughness = 0.1, outHeight = -5;
 float persistence = 0.1, frequency = 0.1, amplitude = 0.1;
 int hillNoise = 0;
-int rivers_number = 20, river_length = 50;
+int rivers_number = 2, river_length = 10;
 vector<vector<int> > rivers;
 
 float minMaxRandom(float min, float max) {

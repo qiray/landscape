@@ -4,78 +4,95 @@
 #include <algorithm>
 #include "rivers_generator.h"
 
-inline bool suitableHeight(landscapeCell *landscape, int newIndex, int index) {
-	int diff = landscape[newIndex] - landscape[index];
-	if (diff <= 0)
+inline bool checkNeighbour(landscapeCell *landscape, vector<int> &list, bool cond, int index, int &inc, int *map, int dist, int finish) {
+	if (index == finish) {
+		list.push_back(index);
+		inc++;
+		map[index] = dist;
 		return true;
-	int probability = rand()%101;
-	if (probability >= 25 && diff == 1)
-		return true;
-	if (probability >= 50 && diff == 2)
-		return true;
-	if (probability >= 90 && diff == 3)
-		return true;
-	/*if (probability >= 99)
-		return true;*/
+	}
+	if (cond && landscape[index] > 0 && map[index] == -1) {
+		list.push_back(index);
+		inc++;
+		map[index] = dist;
+	}
 	return false;
 }
 
-inline void checkNeighbour(landscapeCell *landscape, int mapSize, const vector<int>& river, vector<int>& candidates, int diff, int index) {
-	int x = index%mapSize, y = index/mapSize;
-	if (diff == 1 || diff == -1)
-		x += diff;
-	else
-		y += diff < 0 ? -1 : 1;
-	int newIndex = index + diff;
-	if (x >= 0 && x < mapSize && y >= 0 && y < mapSize && suitableHeight(landscape, newIndex, index) &&
-	    find(river.begin(), river.end(), newIndex) == river.end())
-		candidates.push_back(newIndex);
-}
-
-inline int nextRiverCell (landscapeCell *landscape, int mapSize, const vector<int>& river, int index) {
-	vector<int> candidates;
-	checkNeighbour(landscape, mapSize, river, candidates, 1, index);
-	checkNeighbour(landscape, mapSize, river, candidates, -1, index);
-	checkNeighbour(landscape, mapSize, river, candidates, mapSize, index);
-	checkNeighbour(landscape, mapSize, river, candidates, -mapSize, index);
-	int size = candidates.size();
-	if (size == 0)
-		return -1;
-	else
-		return candidates[rand()%size];
-}
-
-bool generateRiver(landscapeCell *landscape, int mapSize, int index, int size) {
-	vector<int> river;
-	river.push_back(index);
-	int riverLength = 0;
-	while (landscape[index] > 0 && !(index%mapSize == 0 || index/mapSize == 0 || index%mapSize == mapSize - 1 || index/mapSize == mapSize - 1)) {
-		index = nextRiverCell(landscape, mapSize, river, index);
-		if (index == -1)
-			return false;
+inline bool checkWay(bool cond, int *map, int index, int &result, vector<int> &river, int &dist) {
+	if(cond && map[index] == map[result] - 1) {
+		result = index;
+		dist--;
 		river.push_back(index);
-		riverLength++;
+		return true;
 	}
-	printf("River done! Length = %d\n", riverLength);
-	rivers.push_back(river);
-	return true;
+	return false;
 }
 
-inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y) {
-	if (x < 0 || y < 0 || x > mapSize || y > mapSize || landscape[y*mapSize + x] <= 0)
+bool generateRiver(landscapeCell *landscape, int mapSize, int start, int finish, int size) {
+	vector<int> river, list;
+	int dist = 0, index = start, listIndex = 0, listSize = 1, inc = 1;
+	bool flag = false;
+	int *map = new int[mapSize*mapSize];
+	for (int i = mapSize*mapSize; i >= 0; i--)
+		map[i] = -1;
+	map[index] = dist;
+	list.push_back(index);
+	while (!flag && inc > 0) {
+		inc = 0;
+		int index_inc = 0;
+		for (int i = listIndex; i < listSize; i++) {
+			int x = list[i]%mapSize, y = list[i]/mapSize;
+			index_inc++;
+			if (checkNeighbour(landscape, list, x - 1 >= 0, y*mapSize + x - 1, inc, map, dist + 1, finish) ||
+			    checkNeighbour(landscape, list, x + 1 < mapSize, y*mapSize + x + 1, inc, map, dist + 1, finish) ||
+			    checkNeighbour(landscape, list, y - 1 >= 0, (y - 1)*mapSize + x, inc, map, dist + 1, finish) ||
+			    checkNeighbour(landscape, list, y + 1 < mapSize, (y + 1)*mapSize + x, inc, map, dist + 1, finish)) {
+				flag = true;
+				break;
+			}
+		}
+		listIndex += index_inc;
+		listSize += inc;
+		dist++;
+	}
+	if (flag) { //river done
+		index = finish;
+		dist = map[finish];
+		while(index != start) {
+			int x = index%mapSize, y = index/mapSize;
+			if (checkWay(x - 1 >= 0, map, y*mapSize + x - 1, index, river, dist) ||
+			    checkWay(x + 1 < mapSize, map, y*mapSize + x + 1, index, river, dist) ||
+			    checkWay(y - 1 >= 0, map, (y - 1)*mapSize + x, index, river, dist) ||
+			    checkWay(y + 1 < mapSize, map, (y + 1)*mapSize + x, index, river, dist)) {
+				continue;
+			}
+		}
+		rivers.push_back(river);
+		printf("River done! Length = %d\n", river.size());
+	}
+	delete [] map;
+	return flag;
+}
+
+inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y, int &finish) {
+	if (x < 0 || y < 0 || x > mapSize || y > mapSize)
+		return false;
+	if (0 || landscape[y*mapSize + x] <= 0) {
+		finish = y*mapSize + x;
 		return true;
-	else
+	} else
 		return false;
 }
 
-inline int distanceToWater(landscapeCell *landscape, int mapSize, int index, int step) {
-	int dist = 1, x = index%mapSize, y = index/mapSize;
+inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {
+	int dist = 1, x = start%mapSize, y = start/mapSize;
 	while(1) {
 		for (int i = x - dist; i <= x + dist; i++)
-			if (isWater(landscape, mapSize, i, y - dist) || isWater(landscape, mapSize, i, y + dist))
+			if (isWater(landscape, mapSize, i, y - dist, finish) || isWater(landscape, mapSize, i, y + dist, finish))
 				return dist;
 		for (int i = y - dist + 1; i <= y + dist - 1; i++)
-			if (isWater(landscape, mapSize, x - dist, i) || isWater(landscape, mapSize, x + dist, i))
+			if (isWater(landscape, mapSize, x - dist, i, finish) || isWater(landscape, mapSize, x + dist, i, finish))
 				return dist;
 		if (x - dist < 0 && x + x + dist > mapSize && y - dist < 0 && y + dist > mapSize)
 			return -1;
@@ -101,20 +118,15 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 	printf(" --- average = %g max = %d min = %d number = %d ---\n", average, max, min, highlandsSize);
 	max = (max - min)*factor > average ? (max - min)*factor : average;
 	while (number > 0) {
-		int index = -1, dist, count = 0;
+		int start = -1, finish = -1, dist, count = 0;
 		do {
-			index = highlands[rand()%highlandsSize];
-			dist = distanceToWater(landscape, mapSize, index, 1);
+			start = highlands[rand()%highlandsSize];
+			dist = distanceToWater(landscape, mapSize, start, finish, 1);
 			if (count++ > 20)
 				break;
-		} while (landscape[index] < max || dist < length);
-		//printf("%d ", dist);
-		for (int i = 0; i < 4; i++)
-			if (generateRiver(landscape, mapSize, index, size)) {
-				printf("dist = %d\n", dist);
-				number--;
-				break;
-			}
+		} while (landscape[start] < max || dist < length);
+		generateRiver(landscape, mapSize, start, finish, size);
+		number--;
 	}
 	for (int i = 0; i < rivers.size(); i++)
 		for (int j = rivers[i].size() - 1; j >= 0; j--)
