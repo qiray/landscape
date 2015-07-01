@@ -103,7 +103,6 @@ bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &w
             ways++;//////////calculate average way length                     
          }
          way.push_back(startNum);
-         mapArray[temp->x + temp->y*size] = startCell;
          openList.clear();
          return true;///path found
       }
