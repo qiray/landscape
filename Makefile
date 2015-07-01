@@ -15,8 +15,8 @@ JAVA_GUI_PATH=java
 
 all: $(BIN) JavaGUI
 
-$(BIN): diamond_square.o hill_algorithm.o perlin_noise.o rivers_generator.o landscape.o
-	$(CPP) $(CFLAGS) diamond_square.o landscape.o hill_algorithm.o perlin_noise.o rivers_generator.o -o $(BIN) $(LDFLAGS)
+$(BIN): diamond_square.o hill_algorithm.o perlin_noise.o rivers_generator.o landscape.o astar.a
+	$(CPP) $(CFLAGS) diamond_square.o landscape.o hill_algorithm.o perlin_noise.o rivers_generator.o a_star/astar.a -o $(BIN) $(LDFLAGS)
 	cp $(BIN) $(JAVA_GUI_PATH)
 	
 diamond_square.o: diamond_square.h diamond_square.cpp
@@ -34,6 +34,9 @@ rivers_generator.o: rivers_generator.cpp rivers_generator.h
 landscape.o: landscape.cpp
 	$(CPP) $(CFLAGS) landscape.cpp -c
 	
+astar.a: a_star/*.cpp a_star/*.h
+	cd a_star && make CPP=$(CPP) && cd ..
+	
 JavaGUI: $(JAVA_GUI_PATH)/*.java
 	cd $(JAVA_GUI_PATH) && make && cd ..
 	
@@ -42,3 +45,4 @@ clean:
 	rm -f $(OUTPUT_PATH)/*
 	rm -f landscape landscape.exe JavaGUI $(JAVA_GUI_PATH)/landscape $(JAVA_GUI_PATH)/landscape.exe
 	cd $(JAVA_GUI_PATH) && make clean && cd ..
+	cd a_star && make clean && cd ..
