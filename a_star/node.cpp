@@ -62,7 +62,7 @@ int node::F(node stop) {
 }
 
 bool operator==(const node &n1, const node &n2) {
-   if (n1.x ==n2.x && n2.y == n1.y)
+   if (n1.x == n2.x && n2.y == n1.y)
       return true;
    else
       return false;
@@ -78,6 +78,23 @@ int node::getG() const {
 
 bool operator!=(const node &n1, const node &n2) {
    return !(n1 == n2);
+}
+
+int node::parentStraightLength(float roughness) const {
+	node *current = const_cast<node*>(this), *parent = current->parentNode;
+	int len = 0, prevDiff = 0;
+	if (parent)
+		prevDiff = current->x - parent->x + (current->y - parent->y)*10;
+	while (parent) {
+		int diff = current->x - parent->x + (current->y - parent->y)*10;
+		if (diff != prevDiff)
+			break;
+		current = parent;
+		parent = parent->parentNode;
+		prevDiff = diff;
+		len++;
+	}
+	return len*weight*roughness;
 }
 
 int log2int(int n) {

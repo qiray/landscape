@@ -28,10 +28,10 @@ public:
    int G(int);   
    int F(node);
    int getF() const;
-   int getG() const;   
+   int getG() const;
+   int parentStraightLength(float) const;
    friend bool operator==(const node&, const node&); 
    friend bool operator!=(const node&, const node&); 
-   friend bool compareNode(node*, node*);
 };
 
 #endif
