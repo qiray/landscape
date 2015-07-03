@@ -38,7 +38,7 @@ void mapField::addNode(unsigned short x, unsigned short y, int index, const node
    node *p = &allNodes[i]; 
    if (mapArray[i] == blockedCell || info[i] == 2) //if cell is blocked or in close list
       return;
-   int diff = (mapArray[i] - mapArray[index])*node::weight;
+   int diff = (mapArray[i] - mapArray[index])*2*node::weight;
    if (info[i] != 1) {//if not in open list
       p->H(stop);
       p->parentNode = const_cast<node*>(&current);

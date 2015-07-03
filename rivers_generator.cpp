@@ -11,13 +11,11 @@ inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &f
 	if(landscape[y*mapSize + x] <= 0) {
 		for (int i = x - 1; i <= x + 1; i += 2)
 			if (i >= 0 && i < mapSize && landscape[y*mapSize + i] > 0) {
-				//printf("!!!x: diff = %d %d\n", i, y);
 				finish = y*mapSize + i;
 				return true;
 			}
 		for(int i = y - 1; i <= y + 1; i += 2)
 			if (i >= 0 && i < mapSize && landscape[i*mapSize + x] > 0) {
-				//printf("!!!y: diff = %d %d\n", x, i);
 				finish = i*mapSize + x;
 				return true;
 			}
@@ -25,7 +23,7 @@ inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &f
 		return false;
 }
 
-inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {
+inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) { //TODO: replace with another function
 	int dist = 1, x = start%mapSize, y = start/mapSize;
 	while(1) {
 		for (int i = x - dist; i <= x + dist; i++)
@@ -40,7 +38,7 @@ inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int
 	}
 }
 
-void midpoint(int mapSize, int *vector, int left, int right, int len, float r) {
+void midpoint(landscapeCell *landscape, int mapSize, int *vector, int left, int right, int len, float r) {
     if (right - left < 2)
         return;
     int hl = vector[left], leftx = hl%mapSize, lefty = hl/mapSize;
@@ -48,27 +46,36 @@ void midpoint(int mapSize, int *vector, int left, int right, int len, float r) {
     int xdiff = abs(leftx - rightx), ydiff = abs(lefty - righty);
     int xresult = (leftx + rightx)/2 + minMaxRandom(-r*xdiff, r*xdiff);
     int yresult = (lefty + righty)/2 + minMaxRandom(-r*ydiff, r*ydiff);
-    while (xresult < 0 || xresult >= mapSize || yresult < 0 || yresult >= mapSize) {
+    int h = yresult*mapSize + xresult;
+    while (xresult < 0 || xresult >= mapSize || yresult < 0 || yresult >= mapSize || landscape[h] <= 0 || landscape[h] > landscape[hl] && landscape[h] < landscape[hr]) {
        xresult = (leftx + rightx)/2 + minMaxRandom(-r*xdiff, r*xdiff);
        yresult = (lefty + righty)/2 + minMaxRandom(-r*ydiff, r*ydiff);
+       h = yresult*mapSize + xresult;
     }
-    int h = yresult*mapSize + xresult;
     printf("new: x = %d y = %d\n", xresult, yresult);
-    int index = left + (right - left)/2; //ищем середину
+    int index = left + (right - left)/2;
     vector[index] = h;
-    //выполняем алгоритм для получившихся половин
-    midpoint(mapSize, vector, left, index, len / 2, r);
-    midpoint(mapSize, vector, index, right, len / 2, r);
+    midpoint(landscape, mapSize, vector, left, index, len / 2, r);
+    midpoint(landscape, mapSize, vector, index, right, len / 2, r);
+}
+
+inline int distForLength(int mapSize, int start, int finish) {
+	int len = abs(start%mapSize - finish%mapSize) + abs(start/mapSize - finish/mapSize);
+	if (len <= 64)
+		return 0;
+	if (len <= 128)
+		return 1;
+	return 2;
 }
 
 void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
-	int len = pow(2, 0);
+	int len = pow(2, distForLength(mapSize, start, finish));
 	int heights[len + 1];
 	heights[0] = start;
 	heights[len] = finish;
-	printf("finish: x = %d y = %d\n", finish%mapSize, finish/mapSize);
-	float midpointFactor = 0.9, astarFactor = 0.3;
-	midpoint(mapSize, heights, 0, len, len, midpointFactor);
+	//printf("finish: x = %d y = %d\n", finish%mapSize, finish/mapSize);
+	float midpointFactor = 0.5, astarFactor = 0.3;
+	midpoint(landscape, mapSize, heights, 0, len, len, midpointFactor);
 	vector<int> river, temp;
 	for (int i = 0; i < len; i++) {
 		node startNode(heights[i]%mapSize, heights[i]/mapSize, 0);
