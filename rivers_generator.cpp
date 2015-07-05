@@ -121,7 +121,7 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 			dist = distanceToWater(landscape, mapSize, start, finish, 1);
 			if (count++ > 20)
 				break;
-		} while (landscape[start] < max || dist < length);
+		} while (landscape[start] < max || dist < length || landscape[finish] > landscape[start]);
 		//printf("%d %d, %d %d\n", start, finish, landscape[start], landscape[finish]);
 		generateRiverAstar(landscape, mapSize, m, start, finish);
 		number--;
