@@ -38,8 +38,11 @@ void mapField::addNode(unsigned short x, unsigned short y, int index, const node
    node *p = &allNodes[i]; 
    if (mapArray[i] == blockedCell || info[i] == 2) //if cell is blocked or in close list
       return;
-   int diff = (mapArray[i] - mapArray[index])*2*node::weight;
+   int diff = (mapArray[i] - mapArray[index])*node::weight;
+   if (diff > 0)
+   	diff *= 5;
    if (info[i] != 1) {//if not in open list
+      p->g = p->h = 0;
       p->H(stop);
       p->parentNode = const_cast<node*>(&current);
       if (roughness > 0.001)
@@ -48,7 +51,6 @@ void mapField::addNode(unsigned short x, unsigned short y, int index, const node
       p->f = p->g + p->h;;
       info[i] = 1;
       openList.add(&allNodes[i]);
-      //mapArray[i] = 7;///only for demonstartion
    } else if (current.getG() + node::weight + diff < p->G(diff)) {
          p->parentNode = const_cast<node*>(&current);
          p->G(diff);
@@ -84,8 +86,6 @@ printf("start: x = %d y = %d stop: x = %d y = %d\n", startNode.x, startNode.y, s
    int startNum = startNode.x + startNode.y*size;
    int stopNum = stopNode.x + stopNode.y*size;
    int limit = size*size;
-   for (int i = 0; i < limit; i++)
-	allNodes[i].g = allNodes[i].h = 0;
    unsigned short stopX = stopNode.x, stopY = stopNode.y;
    memset(info, '\0', limit*sizeof(char));
    start = &allNodes[startNum];
@@ -105,7 +105,7 @@ printf("start: x = %d y = %d stop: x = %d y = %d\n", startNode.x, startNode.y, s
          node *temp(&allNodes[stopNum]);
          while (temp != start) {//while start node isn't reached
             temp = temp->parentNode;//go back to start through nodes' parents
-            //mapArray[temp->x + temp->y*size] = 5; ///only for demonstration 
+            //mapArray[temp->x + temp->y*size] = blockedCell; //river's influence
             way.push_back(temp->x + temp->y*size);                   
          }
          return true;///path found
@@ -133,30 +133,3 @@ void mapField::makeRegions () {
    delete [] coordStack.stack;
 }
 
-/*void func() { 
-	
-}
-
-int main(int argc, char** argv) {
-   try {
-      mapField m(1);
-      //generateField(512, 1, m);
-      //m.saveMap(argv[1]);
-      //return 0;
-      m.loadMap(argv[1]);     
-      node start, stop;
-      m.makeRegions();//prepare regions for A*
-      start = m.loadStart();
-      stop = m.loadStop();
-      if(m.Astar(start, stop, 0))
-         cout << "founded \n";
-      else
-         cout << "no\n";
-      m.saveMap(argv[2]);
-      return 0;
-   }
-   catch (string s) {
-      cerr << s << endl;
-      return 1;
-   }
-}*/

@@ -69,7 +69,7 @@ inline int distForLength(int mapSize, int start, int finish) {
 }
 
 void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
-	int len = pow(2, distForLength(mapSize, start, finish));
+	int len = pow(2, 0/*distForLength(mapSize, start, finish)*/);
 	int heights[len + 1];
 	heights[0] = start;
 	heights[len] = finish;
@@ -87,15 +87,6 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
 	for (int i = 0; i < river.size(); i++) //TODO: river must change landscape
 		landscape[river[i]] = 0;
 	//rivers.push_back(river);
-	
-	/*node startNode(start%mapSize, start/mapSize, 0);
-	node finishNode(finish%mapSize, finish/mapSize, 0);
-	printf("start: x = %d y = %d, finish: x = %d, y = %d\n",start%mapSize, start/mapSize,finish%mapSize, finish/mapSize);
-	vector<int> river;
-	if (m.Astar(startNode, finishNode, river, 0.3, 0)) {
-		rivers.push_back(river);
-		printf("River done! Length = %d\n", river.size());
-	}*/
 }
 
 void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int size) {
