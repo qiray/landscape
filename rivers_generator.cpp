@@ -8,7 +8,7 @@
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
 	if (x < 0 || y < 0 || x >= mapSize || y >= mapSize)
 		return false;
-	if(landscape[y*mapSize + x] <= 0) {
+	if(landscape[y*mapSize + x] <= -1 || landscape[y*mapSize + x] == 0 && rand()%101 > 90) {
 		for (int i = x - 1; i <= x + 1; i += 2)
 			if (i >= 0 && i < mapSize && landscape[y*mapSize + i] > 0) {
 				finish = y*mapSize + i;
@@ -38,51 +38,20 @@ inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int
 	}
 }
 
-void midpoint(landscapeCell *landscape, int mapSize, int *vector, int left, int right, int len, float r) {
-    if (right - left < 2)
-        return;
-    int hl = vector[left], leftx = hl%mapSize, lefty = hl/mapSize;
-    int hr = vector[right], rightx = hr%mapSize, righty = hr/mapSize;
-    int xdiff = abs(leftx - rightx), ydiff = abs(lefty - righty);
-    int xresult = (leftx + rightx)/2 + minMaxRandom(-r*xdiff, r*xdiff);
-    int yresult = (lefty + righty)/2 + minMaxRandom(-r*ydiff, r*ydiff);
-    int h = yresult*mapSize + xresult;
-    while (xresult < 0 || xresult >= mapSize || yresult < 0 || yresult >= mapSize || landscape[h] <= 0 || landscape[h] > landscape[hl] && landscape[h] < landscape[hr]) {
-       xresult = (leftx + rightx)/2 + minMaxRandom(-r*xdiff, r*xdiff);
-       yresult = (lefty + righty)/2 + minMaxRandom(-r*ydiff, r*ydiff);
-       h = yresult*mapSize + xresult;
-    }
-    printf("new: x = %d y = %d\n", xresult, yresult);
-    int index = left + (right - left)/2;
-    vector[index] = h;
-    midpoint(landscape, mapSize, vector, left, index, len / 2, r);
-    midpoint(landscape, mapSize, vector, index, right, len / 2, r);
-}
-
-inline int distForLength(int mapSize, int start, int finish) {
+inline float factorByLength(int mapSize, int start, int finish) {
 	int len = abs(start%mapSize - finish%mapSize) + abs(start/mapSize - finish/mapSize);
 	if (len <= 64)
-		return 0;
+		return 0.5;
 	if (len <= 128)
-		return 1;
-	return 2;
+		return 0.1;
+	return 0.02;
 }
 
 void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
-	int len = pow(2, 0/*distForLength(mapSize, start, finish)*/);
-	int heights[len + 1];
-	heights[0] = start;
-	heights[len] = finish;
-	//printf("finish: x = %d y = %d\n", finish%mapSize, finish/mapSize);
-	float midpointFactor = 0.5, astarFactor = 0.3;
-	midpoint(landscape, mapSize, heights, 0, len, len, midpointFactor);
-	vector<int> river, temp;
-	for (int i = 0; i < len; i++) {
-		node startNode(heights[i]%mapSize, heights[i]/mapSize, 0);
-		node finishNode(heights[i + 1]%mapSize, heights[i + 1]/mapSize, 0);
-		m.Astar(startNode, finishNode, temp, astarFactor, 0);
-		river.insert(river.end(), temp.begin(), temp.end());
-	}
+	vector<int> river;
+	node startNode(start%mapSize, start/mapSize, 0);
+	node finishNode(finish%mapSize, finish/mapSize, 0);
+	m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
 	printf("River done! Length = %d\n", river.size());
 	for (int i = 0; i < river.size(); i++) //TODO: river must change landscape
 		landscape[river[i]] = 0;
@@ -110,9 +79,6 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 	printf(" --- average = %g max = %d min = %d number = %d ---\n", average, max, min, highlandsSize);
 	max = (max - min)*factor > average ? (max - min)*factor : average;
 	mapField m(mapSize, tempMap);
-	//generateRiverAstar(landscape, mapSize, m, 0*mapSize + 10, 25*mapSize + 10);
-	//generateRiverAstar(landscape, mapSize, m, 181*mapSize + 139, 17*mapSize + 14);
-	//generateRiverAstar(landscape, mapSize, m, 261*mapSize + 57, 17*mapSize + 14);
 	while (number > 0) {
 		printf("Making river\n");
 		int start = -1, finish = -1, dist, count = 0;

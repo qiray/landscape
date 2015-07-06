@@ -8,7 +8,9 @@ import java.awt.image.*;
 public class JavaGUI extends JPanel {
 
 	Image img;
-	JTextField mapNameTextField, seedTextField, startHeightTextField, roughnessTextField, islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField;
+	JTextField mapNameTextField, seedTextField, startHeightTextField, roughnessTextField, 
+		islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField,
+		riversNumberTextField, riverLengthTextField;
 	JComboBox<String> algoritmsList;
 
 	public Color getColorFromInt(int c) {
@@ -86,6 +88,8 @@ public class JavaGUI extends JPanel {
 		result += "--amplitude " + Float.parseFloat(amplitudeTextField.getText()) + " ";
 		result += "--persistence " + Float.parseFloat(persistenceTextField.getText()) + " ";
 		result += "--frequency " + Float.parseFloat(frequencyTextField.getText()) + " ";
+		result += "--rivers_number " + Float.parseFloat(riversNumberTextField.getText()) + " ";
+		result += "--river_length " + Float.parseFloat(riverLengthTextField.getText()) + " ";
 		return result;
 	}
 	
@@ -155,14 +159,16 @@ public class JavaGUI extends JPanel {
 		roughnessTextField = makeLabelText("Roughness:", 520, 90, 100, 25, "0.2", 650, 90, 100);
 		islandsTextField = makeLabelText("Islands (hill algorithm):", 520, 120, 230, 25, "4", 700, 120, 50);
 		startHeightTextField = makeLabelText("Init height (diamond square):", 520, 150, 230, 25, "5", 520, 180, 230);
+		riversNumberTextField = makeLabelText("Number of rivers:", 520, 210, 230, 25, "10", 660, 210, 90);
+		riverLengthTextField = makeLabelText("River's min length:", 520, 240, 230, 25, "20", 660, 240, 90);
 		
 		JLabel perlinHillInfoLabel = new JLabel("Perlin noise algorithm only:");
-		perlinHillInfoLabel.setBounds(520, 210, 230, 25);
+		perlinHillInfoLabel.setBounds(520, 270, 230, 25);
 		this.add(perlinHillInfoLabel);
 		
-		amplitudeTextField = makeLabelText("Amplitude:", 520, 240, 100, 25, "0.25", 630, 240, 120);
-		persistenceTextField = makeLabelText("Persistence:", 520, 270, 100, 25, "0.7", 630, 270, 120);
-		frequencyTextField = makeLabelText("Frequency:", 520, 300, 100, 25, "0.01", 630, 300, 120);
+		amplitudeTextField = makeLabelText("Amplitude:", 520, 300, 100, 25, "0.25", 630, 300, 120);
+		persistenceTextField = makeLabelText("Persistence:", 520, 330, 100, 25, "0.7", 630, 330, 120);
+		frequencyTextField = makeLabelText("Frequency:", 520, 360, 100, 25, "0.01", 630, 360, 120);
 		
 		JButton generateLandscapeButton = new JButton("Generate landscape");
 		generateLandscapeButton.addActionListener(new AbstractAction() {
@@ -173,7 +179,7 @@ public class JavaGUI extends JPanel {
 				repaint();
 			}
 		});
-		generateLandscapeButton.setBounds(520, 330, 230, 25);
+		generateLandscapeButton.setBounds(520, 390, 230, 25);
 		this.add(generateLandscapeButton);
 	}	
 	
