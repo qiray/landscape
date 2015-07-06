@@ -7,6 +7,7 @@ import java.awt.image.*;
 @SuppressWarnings("serial")
 public class JavaGUI extends JPanel {
 
+	int xpos, ypos;
 	Image img;
 	JTextField mapNameTextField, seedTextField, startHeightTextField, roughnessTextField, 
 		islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField,
@@ -122,6 +123,79 @@ public class JavaGUI extends JPanel {
 		return textField;
 	}
 	
+	private void loadConfig(String fileName) {
+		try {
+			File file = new File(fileName);
+			FileReader fr = new FileReader(file); 
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			while ((line = br.readLine()) != null) {
+				line = line.replaceAll("\\s","");
+				int length = line.length();
+				if (length == 0 || line.charAt(0) == '#')
+					continue;
+				else {
+					String parts[] = line.split("=");
+					if (parts[0].equals("positionx"))
+						xpos = Integer.parseInt(parts[1]);
+					else if (parts[0].equals("positiony"))
+						ypos = Integer.parseInt(parts[1]);
+					else if (parts[0].equals("mapfile"))
+						mapNameTextField.setText(parts[1]);
+					else if (parts[0].equals("algorithm"))
+						algoritmsList.setSelectedIndex(Integer.parseInt(parts[1]));
+					else if (parts[0].equals("seed"))
+						seedTextField.setText(parts.length == 1 ? "" : parts[1]);
+					else if (parts[0].equals("height"))
+						startHeightTextField.setText(parts[1]);
+					else if (parts[0].equals("roughness"))
+						roughnessTextField.setText(parts[1]);
+					else if (parts[0].equals("islands"))
+						islandsTextField.setText(parts[1]);
+					else if (parts[0].equals("riversnumber"))
+						riversNumberTextField.setText(parts[1]);
+					else if (parts[0].equals("riverslength"))
+						riverLengthTextField.setText(parts[1]);
+					else if (parts[0].equals("amplitude"))
+						amplitudeTextField.setText(parts[1]);
+					else if (parts[0].equals("persistence"))
+						persistenceTextField.setText(parts[1]);
+					else if (parts[0].equals("frequency"))
+						frequencyTextField.setText(parts[1]);
+				}
+			}
+			fr.close();
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace(); 
+		}
+	}
+	
+	private void saveConfig(String fileName, int x, int y) {
+		try {
+			PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+			writer.println("#Landscape GUI config file");
+			writer.println("positionx=" + x);
+			writer.println("positiony=" + y);
+			writer.println("");
+			writer.println("mapfile=" + mapNameTextField.getText());
+			writer.println("");
+			writer.println("algorithm=" + algoritmsList.getSelectedIndex());
+			writer.println("seed=" + seedTextField.getText());
+			writer.println("height=" + startHeightTextField.getText());
+			writer.println("roughness=" + roughnessTextField.getText());
+			writer.println("islands=" + islandsTextField.getText());
+			writer.println("riversnumber=" + riversNumberTextField.getText());
+			writer.println("riverslength=" + riverLengthTextField.getText());
+			writer.println("amplitude=" + amplitudeTextField.getText());
+			writer.println("persistence=" + persistenceTextField.getText());
+			writer.println("frequency=" + frequencyTextField.getText());
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace(); 
+		}
+	}	
+	
 	public JavaGUI() {
 		this.setLayout(null);
 		Action action = new AbstractAction() {
@@ -181,7 +255,16 @@ public class JavaGUI extends JPanel {
 		});
 		generateLandscapeButton.setBounds(520, 390, 230, 25);
 		this.add(generateLandscapeButton);
-	}	
+		this.loadConfig("settings.cfg");
+	}
+	
+	public int getXPosition() {
+		return xpos;
+	}
+
+	public int getYPosition() {
+		return ypos;
+	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -192,15 +275,18 @@ public class JavaGUI extends JPanel {
 		JFrame frame = new JFrame();
 		frame.setTitle("Landsacpe GUI");
 		frame.setSize(770, 582);
-		//frame.setLocation(200, 200);
 		frame.setMinimumSize(new Dimension(770, 582));
+		Container contentPane = frame.getContentPane();
+		JavaGUI jgui = new JavaGUI();
+		contentPane.add(jgui);
+		frame.setVisible(true);
+		frame.setLocation(jgui.getXPosition(), jgui.getYPosition());
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				System.out.println("Saving config");
+				jgui.saveConfig("settings.cfg", frame.getX(), frame.getY());
 				System.exit(0);
 			}
 		});
-		Container contentPane = frame.getContentPane();
-		contentPane.add(new JavaGUI());
-		frame.setVisible(true);
 	}
 }
