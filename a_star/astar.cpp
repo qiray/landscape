@@ -1,4 +1,5 @@
 #include "mapfield.h"
+#include <algorithm>
 
 extern stack coordStack;
 
@@ -99,15 +100,16 @@ printf("start: x = %d y = %d stop: x = %d y = %d\n", startNode.x, startNode.y, s
    while(!openList.empty()) {
       node *current(openList.getMax());
       info[current->x + current->y*size] = 2;
-      addAvailable(*current, *stop, roughness);
-      way.push_back(stopNum);  
+      addAvailable(*current, *stop, roughness); 
       if (info[stopNum] == 1 || maxRadius(stopX, stopY, step, stopNum)) {//if stop node is in the open list
          node *temp(&allNodes[stopNum]);
+	 way.push_back(stopNum); 
          while (temp != start) {//while start node isn't reached
             temp = temp->parentNode;//go back to start through nodes' parents
             //mapArray[temp->x + temp->y*size] = blockedCell; //river's influence
             way.push_back(temp->x + temp->y*size);                   
          }
+         reverse(way.begin(), way.end());
          return true;///path found
       }
    }

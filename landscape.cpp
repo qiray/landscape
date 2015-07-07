@@ -27,7 +27,7 @@ int randomSeed = 0, startHeight = 5;
 float roughness = 0.1, outHeight = -5;
 float persistence = 0.1, frequency = 0.1, amplitude = 0.1;
 int hillNoise = 0;
-int rivers_number = 10, river_length = 20;
+int rivers_number = 10, river_length = 20, river_width = 1;
 vector<vector<int> > rivers;
 
 float minMaxRandom(float min, float max) {
@@ -68,7 +68,7 @@ void generateHeights(landscapeCell *landscape, int mapSize, int height, float ro
 
 void generateLandscape(landscapeCell *landscape, int mapSize, int height, float roughness, float outHeight, int numberOfIslands, int islandSize) {
 	generateHeights(landscape, mapSize, height, roughness, outHeight, numberOfIslands, islandSize);
-	generateRivers(landscape, mapSize, rivers_number, river_length, 5);
+	generateRivers(landscape, mapSize, rivers_number, river_length, river_width);
 }
 
 void printLandscape(landscapeCell *landscape, int mapSize, const string &outputName) {
@@ -128,8 +128,9 @@ int main(int argc, char **argv) {
 		PARSE_FLOAT("--amplitude", amplitude);
 		PARSE_FLOAT("--persistence", persistence);
 		PARSE_FLOAT("--frequency", frequency);
-		PARSE_FLOAT("--rivers_number", rivers_number);
-		PARSE_FLOAT("--river_length", river_length);
+		PARSE_INT("--rivers_number", rivers_number);
+		PARSE_INT("--river_length", river_length);
+		PARSE_INT("--river_width", river_width);
 		if (strcmp(argv[i], "--noise") == 0) {
 			hillNoise = 1;
 			continue;

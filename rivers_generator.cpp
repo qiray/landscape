@@ -47,18 +47,31 @@ inline float factorByLength(int mapSize, int start, int finish) {
 	return 0.02;
 }
 
-void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
+void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish, int width) {
 	vector<int> river;
 	node startNode(start%mapSize, start/mapSize, 0);
 	node finishNode(finish%mapSize, finish/mapSize, 0);
 	m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
 	printf("River done! Length = %d\n", river.size());
-	for (int i = 0; i < river.size(); i++) //TODO: river must change landscape
-		landscape[river[i]] = 0;
+	int length = river.size() - 1, totalLength = mapSize*mapSize;
+	int size = 1, halfsize = 0;
+	width = 
+	for (int i = 0; i <= length; i++) { //TODO: river must change landscape
+		if (width <= 1 || i < length/width)
+			landscape[river[i]] = 0;
+		else {
+			if (i == size*length/width)
+				halfsize = ++size/2;
+			int direction = abs(i < length ? river[i] - river[i + 1] : river[i - 1] - river[i]) == 1 ? mapSize : 1;
+			for (int j = river[i] - direction*halfsize; j <= river[i] + (size&1 ? direction*halfsize : direction*(halfsize - 1)); j += direction)
+				if (j > 0 && j < totalLength)
+					landscape[j] = 0;
+		}
+	}
 	//rivers.push_back(river);
 }
 
-void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int size) {
+void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int width) {
 	vector<int> highlands;
 	int len = mapSize*mapSize, max = 0, min = MAX_LANDSCAPE_CELL;
 	int *tempMap = new int [len];
@@ -89,7 +102,7 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 				break;
 		} while (landscape[start] < max || dist < length || landscape[finish] > landscape[start]);
 		//printf("%d %d, %d %d\n", start, finish, landscape[start], landscape[finish]);
-		generateRiverAstar(landscape, mapSize, m, start, finish);
+		generateRiverAstar(landscape, mapSize, m, start, finish, width);
 		number--;
 	}
 	for (int i = 0; i < rivers.size(); i++)
