@@ -74,24 +74,18 @@ int neighbourWater(landscapeCell *landscape, int mapSize, int index) {
 
 void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int width) {
 	vector<int> highlands;
-	int len = mapSize*mapSize, max = 0, min = MAX_LANDSCAPE_CELL;
+	int len = mapSize*mapSize;
 	int *tempMap = new int [len];
 	double average = 0.0, factor = 0.3;
 	for (int i = 0; i < len; i++) {
 		tempMap[i] = landscape[i] > 0 ? landscape[i] : blockedCell;
-		if (landscape[i] > 0) {
-			if (landscape[i] < min)
-				min = landscape[i];
-			if (landscape[i] > max)
-				max = landscape[i];
+		if (landscape[i] > 0)
 			highlands.push_back(i);
-		}
 	}
 	int highlandsSize = highlands.size();
 	for (int i = 0; i < highlandsSize; i++)
 		average += (double)landscape[highlands[i]]/highlandsSize;
-	printf(" --- average = %g max = %d min = %d number = %d ---\n", average, max, min, highlandsSize);
-	max = (max - min)*factor > average ? (max - min)*factor : average;
+	average *= factor;
 	mapField m(mapSize, tempMap);
 	while (number > 0) {
 		printf("Making river\n");
@@ -99,9 +93,9 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 		do {
 			start = highlands[rand()%highlandsSize];
 			dist = distanceToWater(landscape, mapSize, start, finish, 1);
-			if (count++ > 20)
+			if (count++ > 50)
 				break;
-		} while (landscape[start] < max || dist < length || landscape[finish] > landscape[start]);
+		} while (landscape[start] < average || dist < length || landscape[finish] > landscape[start]);
 		//printf("%d %d, %d %d\n", start, finish, landscape[start], landscape[finish]);
 		generateRiverAstar(landscape, mapSize, m, start, finish);
 		number--;
@@ -116,7 +110,8 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 	for (int i = 0; i < rivers.size(); i++) {
 		length = rivers[i].size();
 		int size = 1, halfsize = 0, totalLength = mapSize*mapSize;
-		int newWidth = width <= 1 ? 1 : length/100;
+		int newWidth = width <= 1 ? 1 : length/32;
+		//printf("width = %d", newWidth);
 		newWidth = newWidth > width ? width : newWidth;
 		newWidth = newWidth <= 1 ? 1 : newWidth;
 		for (int j = 0; j < length; j++) { //TODO: river must change landscape

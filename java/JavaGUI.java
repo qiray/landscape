@@ -11,7 +11,7 @@ public class JavaGUI extends JPanel {
 	Image img;
 	JTextField mapNameTextField, seedTextField, startHeightTextField, roughnessTextField, 
 		islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField,
-		riversNumberTextField, riverLengthTextField;
+		riversNumberTextField, riverLengthTextField, riverWidthTextField;
 	JComboBox<String> algoritmsList;
 
 	public Color getColorFromInt(int c) {
@@ -89,8 +89,9 @@ public class JavaGUI extends JPanel {
 		result += "--amplitude " + Float.parseFloat(amplitudeTextField.getText()) + " ";
 		result += "--persistence " + Float.parseFloat(persistenceTextField.getText()) + " ";
 		result += "--frequency " + Float.parseFloat(frequencyTextField.getText()) + " ";
-		result += "--rivers_number " + Float.parseFloat(riversNumberTextField.getText()) + " ";
-		result += "--river_length " + Float.parseFloat(riverLengthTextField.getText()) + " ";
+		result += "--rivers_number " + Integer.parseInt(riversNumberTextField.getText()) + " ";
+		result += "--river_length " + Integer.parseInt(riverLengthTextField.getText()) + " ";
+		result += "--river_width " + Integer.parseInt(riverWidthTextField.getText()) + " ";
 		return result;
 	}
 	
@@ -154,6 +155,8 @@ public class JavaGUI extends JPanel {
 						islandsTextField.setText(parts[1]);
 					else if (parts[0].equals("riversnumber"))
 						riversNumberTextField.setText(parts[1]);
+					else if (parts[0].equals("riverswidth"))
+						riverWidthTextField.setText(parts[1]);
 					else if (parts[0].equals("riverslength"))
 						riverLengthTextField.setText(parts[1]);
 					else if (parts[0].equals("amplitude"))
@@ -167,6 +170,7 @@ public class JavaGUI extends JPanel {
 			fr.close();
 			br.close();
 		} catch (IOException e) {
+			System.err.println("Failed to load config " + fileName);
 			e.printStackTrace(); 
 		}
 	}
@@ -187,11 +191,13 @@ public class JavaGUI extends JPanel {
 			writer.println("islands=" + islandsTextField.getText());
 			writer.println("riversnumber=" + riversNumberTextField.getText());
 			writer.println("riverslength=" + riverLengthTextField.getText());
+			writer.println("riverswidth=" + riverWidthTextField.getText());
 			writer.println("amplitude=" + amplitudeTextField.getText());
 			writer.println("persistence=" + persistenceTextField.getText());
 			writer.println("frequency=" + frequencyTextField.getText());
 			writer.close();
 		} catch (IOException e) {
+			System.err.println("Failed to save config " + fileName);
 			e.printStackTrace(); 
 		}
 	}	
@@ -235,14 +241,15 @@ public class JavaGUI extends JPanel {
 		startHeightTextField = makeLabelText("Init height (diamond square):", 520, 150, 230, 25, "5", 520, 180, 230);
 		riversNumberTextField = makeLabelText("Number of rivers:", 520, 210, 230, 25, "10", 660, 210, 90);
 		riverLengthTextField = makeLabelText("River's min length:", 520, 240, 230, 25, "20", 660, 240, 90);
+		riverWidthTextField = makeLabelText("River's max width:", 520, 270, 230, 25, "3", 660, 270, 90);
 		
 		JLabel perlinHillInfoLabel = new JLabel("Perlin noise algorithm only:");
-		perlinHillInfoLabel.setBounds(520, 270, 230, 25);
+		perlinHillInfoLabel.setBounds(520, 300, 230, 25);
 		this.add(perlinHillInfoLabel);
 		
-		amplitudeTextField = makeLabelText("Amplitude:", 520, 300, 100, 25, "0.25", 630, 300, 120);
-		persistenceTextField = makeLabelText("Persistence:", 520, 330, 100, 25, "0.7", 630, 330, 120);
-		frequencyTextField = makeLabelText("Frequency:", 520, 360, 100, 25, "0.01", 630, 360, 120);
+		amplitudeTextField = makeLabelText("Amplitude:", 520, 330, 100, 25, "0.25", 630, 330, 120);
+		persistenceTextField = makeLabelText("Persistence:", 520, 360, 100, 25, "0.7", 630, 360, 120);
+		frequencyTextField = makeLabelText("Frequency:", 520, 390, 100, 25, "0.01", 630, 390, 120);
 		
 		JButton generateLandscapeButton = new JButton("Generate landscape");
 		generateLandscapeButton.addActionListener(new AbstractAction() {
@@ -253,7 +260,7 @@ public class JavaGUI extends JPanel {
 				repaint();
 			}
 		});
-		generateLandscapeButton.setBounds(520, 390, 230, 25);
+		generateLandscapeButton.setBounds(520, 420, 230, 25);
 		this.add(generateLandscapeButton);
 		this.loadConfig("settings.cfg");
 	}
