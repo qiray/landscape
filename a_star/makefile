@@ -1,8 +1,18 @@
-CPP= g++
+
 CFLAGS = -O3
 
+ifeq ($(OS),win) 
+	CPP=i686-w64-mingw32-g++
+	AR=i686-w64-mingw32-ar
+	LDFLAGS= -static-libstdc++ -static -s 
+else
+	CPP=g++
+	LDFLAGS= -s
+	AR=ar
+endif
+
 astar.a: node.o binary_heap.o mapfield.o astar.o
-	ar rvs astar.a node.o binary_heap.o mapfield.o astar.o
+	$(AR) rsv astar.a node.o binary_heap.o mapfield.o astar.o
 
 #astar: astar.o mapfield.o node.o binary_heap.o makefile
 #	$(CC) -g node.o mapfield.o binary_heap.o astar.o -o astar

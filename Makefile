@@ -35,7 +35,7 @@ landscape.o: landscape.cpp
 	$(CPP) $(CFLAGS) landscape.cpp -c
 	
 astar.a: a_star/*.cpp a_star/*.h
-	cd a_star && make CPP=$(CPP) && cd ..
+	cd a_star && make OS=$(OS) && cd ..
 	
 JavaGUI: $(JAVA_GUI_PATH)/*.java
 	cd $(JAVA_GUI_PATH) && make && cd ..
