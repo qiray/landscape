@@ -47,28 +47,29 @@ inline float factorByLength(int mapSize, int start, int finish) {
 	return 0.02;
 }
 
-void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish, int width) {
+void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
 	vector<int> river;
 	node startNode(start%mapSize, start/mapSize, 0);
 	node finishNode(finish%mapSize, finish/mapSize, 0);
 	m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
 	printf("River done! Length = %d\n", river.size());
-	int length = river.size() - 1, totalLength = mapSize*mapSize;
-	int size = 1, halfsize = 0;
-	width = 
-	for (int i = 0; i <= length; i++) { //TODO: river must change landscape
-		if (width <= 1 || i < length/width)
-			landscape[river[i]] = 0;
-		else {
-			if (i == size*length/width)
-				halfsize = ++size/2;
-			int direction = abs(i < length ? river[i] - river[i + 1] : river[i - 1] - river[i]) == 1 ? mapSize : 1;
-			for (int j = river[i] - direction*halfsize; j <= river[i] + (size&1 ? direction*halfsize : direction*(halfsize - 1)); j += direction)
-				if (j > 0 && j < totalLength)
-					landscape[j] = 0;
-		}
-	}
-	//rivers.push_back(river);
+	int length = river.size() - 1;
+	for (int i = 0; i <= length; i++) 
+		landscape[river[i]] = 0;
+	rivers.push_back(river);
+}
+
+int neighbourWater(landscapeCell *landscape, int mapSize, int index) {
+	int sum = 0;
+	if (landscape[index + 1] == 0)
+		sum++;
+	if (landscape[index - 1] == 0)
+		sum++;
+	if (landscape[index + mapSize] == 0)
+		sum++;
+	if (landscape[index - mapSize] == 0)
+		sum++;
+	return sum;
 }
 
 void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int width) {
@@ -102,11 +103,31 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 				break;
 		} while (landscape[start] < max || dist < length || landscape[finish] > landscape[start]);
 		//printf("%d %d, %d %d\n", start, finish, landscape[start], landscape[finish]);
-		generateRiverAstar(landscape, mapSize, m, start, finish, width);
+		generateRiverAstar(landscape, mapSize, m, start, finish);
 		number--;
 	}
+	vector<int> intersections;
 	for (int i = 0; i < rivers.size(); i++)
-		for (int j = rivers[i].size() - 1; j >= 0; j--)
-			landscape[rivers[i][j]] = 0;
+		for (int j = 0; j < rivers[i].size(); j++) {
+			int index = rivers[i][j];
+			if (neighbourWater(landscape, mapSize, index) > 2)
+				intersections.push_back(index);
+		}
+	for (int i = 0; i < rivers.size(); i++) {
+		length = rivers[i].size();
+		int size = 1, halfsize = 0, totalLength = mapSize*mapSize;
+		int newWidth = width <= 1 ? 1 : length/100;
+		newWidth = newWidth > width ? width : newWidth;
+		newWidth = newWidth <= 1 ? 1 : newWidth;
+		for (int j = 0; j < length; j++) { //TODO: river must change landscape
+			int index = rivers[i][j], nextIndex = rivers[i][j + 1];
+			if (size < newWidth && (j == size*length/newWidth || find (intersections.begin(), intersections.end(), index) != intersections.end()))
+				halfsize = ++size/2;
+			int direction = abs(index - nextIndex) == 1 ? mapSize : 1;
+			for (int k = index - direction*halfsize; k <= index + (size&1 ? direction*halfsize : direction*(halfsize - 1)); k += direction)
+				if (k > 0 && k < totalLength)
+					landscape[k] = 0;
+		}
+	}
 	delete [] tempMap;
 }

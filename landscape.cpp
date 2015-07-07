@@ -27,7 +27,7 @@ int randomSeed = 0, startHeight = 5;
 float roughness = 0.1, outHeight = -5;
 float persistence = 0.1, frequency = 0.1, amplitude = 0.1;
 int hillNoise = 0;
-int rivers_number = 10, river_length = 20, river_width = 1;
+int rivers_number = 10, river_length = 20, river_width = 2;
 vector<vector<int> > rivers;
 
 float minMaxRandom(float min, float max) {
@@ -72,28 +72,25 @@ void generateLandscape(landscapeCell *landscape, int mapSize, int height, float 
 }
 
 void printLandscape(landscapeCell *landscape, int mapSize, const string &outputName) {
-	if (outputName.length() > 0) {
-		fstream fs(outputName.c_str(), fstream::out);
-		if (fs.is_open()) {
-			fs << mapSize << endl;
-			for (int i = 0; i < mapSize; i++) {
-				for (int j = 0; j < mapSize; j++)
-					fs << (int)landscape[j + i*mapSize] << " ";
-				fs << endl;
-			}
-			fs.close();
-		} else {
-			cerr << "Failed to open file " << outputName << endl;
-			return;
-		}
-	} else {
-		cout << mapSize << endl;
-		for (int i = 0; i < mapSize; i++) {
-			for (int j = 0; j < mapSize; j++)
-				cout << (int)landscape[j + i*mapSize] << " ";
-			cout << endl;
-		}
+	std::streambuf * buf;
+	fstream fs(outputName.c_str(), fstream::out);
+	int flag = 0;
+	if (fs.is_open()) {
+		flag = 1;
+		buf = fs.rdbuf();
+	} else
+		cerr << "Failed to write into file " << outputName << endl;
+	if (!flag)
+		buf = std::cout.rdbuf();
+	std::ostream out(buf);
+	out << mapSize << endl;
+	for (int i = 0; i < mapSize; i++) {
+		for (int j = 0; j < mapSize; j++)
+			out << (int)landscape[j + i*mapSize] << " ";
+		out << endl;
 	}
+	if (flag)
+		fs.close();
 }
 
 #define PARSE_INT(desc, val) \
