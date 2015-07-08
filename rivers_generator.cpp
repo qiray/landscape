@@ -23,7 +23,7 @@ inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &f
 		return false;
 }
 
-inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) { //TODO: replace with another function
+inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {
 	int dist = 1, x = start%mapSize, y = start/mapSize;
 	while(1) {
 		for (int i = x - dist; i <= x + dist; i++)
@@ -43,7 +43,7 @@ inline float factorByLength(int mapSize, int start, int finish) {
 	if (len <= 64)
 		return 0.5;
 	if (len <= 128)
-		return 0.1;
+		return 0.05;
 	return 0.02;
 }
 
@@ -52,7 +52,6 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
 	node startNode(start%mapSize, start/mapSize, 0);
 	node finishNode(finish%mapSize, finish/mapSize, 0);
 	m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
-	printf("River done! Length = %d\n", river.size());
 	int length = river.size() - 1;
 	for (int i = 0; i <= length; i++) 
 		landscape[river[i]] = 0;
@@ -72,6 +71,27 @@ int neighbourWater(landscapeCell *landscape, int mapSize, int index) {
 	return sum;
 }
 
+int calcWidth(int maxwidth, int length) {
+	int newWidth = length/50;
+	newWidth = newWidth > maxwidth ? maxwidth : newWidth;
+	return newWidth = newWidth <= 1 ? 1 : newWidth;
+}
+
+inline int getVectorIndex (const vector<int>&array, int value) {
+	int len = array.size();
+	for (int i = 0; i < len; i++)
+		if (array[i] == value)
+			return i;
+	return -1;
+}
+
+inline int findRiverLength(const vector<vector<int> >&rivers, int index, int notThisRiver) {
+	for (int i = 0; i < rivers.size(); i++)
+		if (i != notThisRiver && getVectorIndex (rivers[i], index) != -1)
+			return rivers[i].size();
+	return rivers[notThisRiver].size();
+}
+
 void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int width) {
 	vector<int> highlands;
 	int len = mapSize*mapSize;
@@ -88,7 +108,6 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 	average *= factor;
 	mapField m(mapSize, tempMap);
 	while (number > 0) {
-		printf("Making river\n");
 		int start = -1, finish = -1, dist, count = 0;
 		do {
 			start = highlands[rand()%highlandsSize];
@@ -96,28 +115,39 @@ void generateRivers(landscapeCell *landscape, int mapSize, int number, int lengt
 			if (count++ > 50)
 				break;
 		} while (landscape[start] < average || dist < length || landscape[finish] > landscape[start]);
-		//printf("%d %d, %d %d\n", start, finish, landscape[start], landscape[finish]);
 		generateRiverAstar(landscape, mapSize, m, start, finish);
 		number--;
 	}
-	vector<int> intersections;
+	vector<int> intersections, widths;
 	for (int i = 0; i < rivers.size(); i++)
 		for (int j = 0; j < rivers[i].size(); j++) {
 			int index = rivers[i][j];
-			if (neighbourWater(landscape, mapSize, index) > 2)
+			if (neighbourWater(landscape, mapSize, index) > 2) {
 				intersections.push_back(index);
+				widths.push_back(calcWidth(width, findRiverLength(rivers, index, i)));
+			}
 		}
 	for (int i = 0; i < rivers.size(); i++) {
 		length = rivers[i].size();
 		int size = 1, halfsize = 0, totalLength = mapSize*mapSize;
-		int newWidth = width <= 1 ? 1 : length/32;
-		//printf("width = %d", newWidth);
-		newWidth = newWidth > width ? width : newWidth;
-		newWidth = newWidth <= 1 ? 1 : newWidth;
+		int newWidth = calcWidth(width, length);
 		for (int j = 0; j < length; j++) { //TODO: river must change landscape
 			int index = rivers[i][j], nextIndex = rivers[i][j + 1];
-			if (size < newWidth && (j == size*length/newWidth || find (intersections.begin(), intersections.end(), index) != intersections.end()))
-				halfsize = ++size/2;
+			if (j == length - 1)
+				nextIndex = rivers[i][j - 1];
+			if (size < newWidth) {
+				if(j == size*length/newWidth)
+					halfsize = ++size/2;
+				int intersectionIndex = getVectorIndex (intersections, index);
+				if (intersectionIndex != -1) {
+					size += widths[intersectionIndex];
+					halfsize = size/2;
+					if (size > newWidth) {
+						size = newWidth;
+						halfsize = size/2;
+					}
+				}
+			}
 			int direction = abs(index - nextIndex) == 1 ? mapSize : 1;
 			for (int k = index - direction*halfsize; k <= index + (size&1 ? direction*halfsize : direction*(halfsize - 1)); k += direction)
 				if (k > 0 && k < totalLength)

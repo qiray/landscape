@@ -82,7 +82,6 @@ inline bool mapField::maxRadius(unsigned short stopX, unsigned short stopY, unsi
 
 bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &way, float roughness, unsigned short step = 0) {//return 1 if path is found
    //step is max distance between stopNode and node where search stops, if zero then stop only if stop node is reached
-printf("start: x = %d y = %d stop: x = %d y = %d\n", startNode.x, startNode.y, stopNode.x, stopNode.y);
    node *start, *stop;
    int startNum = startNode.x + startNode.y*size;
    int stopNum = stopNode.x + stopNode.y*size;
