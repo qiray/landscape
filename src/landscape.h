@@ -14,27 +14,45 @@ using namespace std;
 #define BIG 4
 #define LARGE 5
 
-//algorithms:
-namespace landscapeAlgorithm {
-	const string diamond_square = "diamond_square";
-	const string hill_algorithm = "hill_algorithm";
-	const string perlin_noise = "perlin_noise";
-	extern string currentAlgorithm;
-	void checkAlgorithm();
-}
-
 typedef char landscapeCell;
 #define MAX_LANDSCAPE_CELL 127
 
-namespace terrain {
-	const landscapeCell deepWater = -32;
-	const landscapeCell water = 0;
-	const landscapeCell coast = 1;
-	const landscapeCell hill = 32;
-	const landscapeCell highland = 64;
-	const landscapeCell everest = 96;
-}
+extern vector<vector<int> > rivers; //TODO: maybe move to class
 
-extern vector<vector<int> > rivers;
+class landscapeAlgorithm {
+	static const string diamond_square;
+	static const string hill_algorithm;
+	static const string perlin_noise;
+	
+	string type;
+	landscapeCell *landscape;
+	string outfileName;
+	int mapSize, numberOfIslands, islandSize;
+	int randomSeed, startHeight;
+	float roughness, outHeight;
+	float persistence, frequency, amplitude;
+	int hillNoise;
+	int checkAlgorithm(const string&);
+public:
+	landscapeAlgorithm(const string&);
+	int setType(const string&);
+	string setOutFileName(const string&);
+	int setMapSize(int);
+	int setNumberOfIslands(int);
+	int setIslandSize(int);
+	int setRandomSeed(int);
+	int setStartHeight(int);
+	float setRoughness(float);
+	float setOutHeight(float);
+	float setAmplitude(float);
+	float setPersistence(float);
+	float setFrequency(float);
+	int setHillNoise(int);
+	void printLandscape();
+	void generateLandscape();
+	~landscapeAlgorithm();
+	
+	friend void generateRivers(landscapeAlgorithm&, int, int, int);
+};
 
 #endif

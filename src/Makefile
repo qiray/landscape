@@ -1,4 +1,4 @@
-CFLAGS = -O3
+CFLAGS = -g
 
 ifeq ($(OS),win) 
 	CPP=i686-w64-mingw32-g++
@@ -6,7 +6,7 @@ ifeq ($(OS),win)
 	BIN=landscape.exe
 else #readelf -d landscape
 	CPP=g++
-	LDFLAGS= -s
+	LDFLAGS=
 	BIN=landscape
 endif
 

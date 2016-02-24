@@ -45,7 +45,7 @@ void liftRegion(float *heights, int mapSize, int x, int y, int steps, int range,
 	}
 }
 
-void hill_algorithm(float *heights, int mapSize, int islands, int islandSize, float roughness, int steps, int maxRange, int maxHeight) {
+void Hill_algorithm(float *heights, int mapSize, int islands, int islandSize, float roughness, int steps, int maxRange, int maxHeight) {
 	if (islands <= 1) {
 		for (int i = 0; i < steps; i++)
 			makeHill(heights, mapSize, rand()%mapSize, rand()%mapSize, rand()%maxRange);

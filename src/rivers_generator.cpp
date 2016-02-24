@@ -92,8 +92,10 @@ inline int findRiverLength(const vector<vector<int> >&rivers, int index, int not
 	return rivers[notThisRiver].size();
 }
 
-void generateRivers(landscapeCell *landscape, int mapSize, int number, int length, int width) {
+void generateRivers(landscapeAlgorithm &alg, int number, int length, int width) {
 	vector<int> highlands;
+	landscapeCell * landscape = alg.landscape;
+	int mapSize = alg.mapSize;
 	int len = mapSize*mapSize;
 	int *tempMap = new int [len];
 	double average = 0.0, factor = 0.3;
