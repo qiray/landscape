@@ -8,6 +8,7 @@ import java.awt.image.*;
 public class JavaGUI extends JPanel {
 
 	int xpos, ypos;
+	String LandscapeGeneratorName = "./landscape";
 	Image img;
 	JTextField mapNameTextField, seedTextField, startHeightTextField, roughnessTextField, 
 		islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField,
@@ -97,7 +98,7 @@ public class JavaGUI extends JPanel {
 	
 	private void runLandscapeGenerator(String arguments) {
 		try {
-			String LandscapeGeneratorName = "./landscape";
+			//String LandscapeGeneratorName = "./landscape";
 			System.out.println("Running " + LandscapeGeneratorName + arguments);
 			Runtime r = Runtime.getRuntime();
 			Process p = r.exec(LandscapeGeneratorName + arguments, null, new File("."));
@@ -165,6 +166,8 @@ public class JavaGUI extends JPanel {
 						persistenceTextField.setText(parts[1]);
 					else if (parts[0].equals("frequency"))
 						frequencyTextField.setText(parts[1]);
+					else if (parts[0].equals("bin"))
+						LandscapeGeneratorName = parts[1];
 				}
 			}
 			fr.close();
@@ -183,6 +186,7 @@ public class JavaGUI extends JPanel {
 			writer.println("positiony=" + y);
 			writer.println("");
 			writer.println("mapfile=" + mapNameTextField.getText());
+			writer.println("bin=" + LandscapeGeneratorName);
 			writer.println("");
 			writer.println("algorithm=" + algoritmsList.getSelectedIndex());
 			writer.println("seed=" + seedTextField.getText());

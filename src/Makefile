@@ -10,14 +10,17 @@ else #readelf -d landscape
 	BIN=landscape
 endif
 
-OUTPUT_PATH=output
-JAVA_GUI_PATH=java
+OUTPUT_PATH=../output
+JAVA_GUI_PATH=../utils/java
+BIN_PATH=../bin
 
 all: $(BIN) JavaGUI
 
 $(BIN): diamond_square.o hill_algorithm.o perlin_noise.o rivers_generator.o landscape.o astar.a
+	mkdir -p $(OUTPUT_PATH)
+	mkdir -p $(BIN_PATH)
 	$(CPP) $(CFLAGS) diamond_square.o landscape.o hill_algorithm.o perlin_noise.o rivers_generator.o a_star/astar.a -o $(BIN) $(LDFLAGS)
-	cp $(BIN) $(JAVA_GUI_PATH)
+	mv $(BIN) $(BIN_PATH)
 	
 diamond_square.o: diamond_square.h diamond_square.cpp
 	$(CPP) $(CFLAGS) diamond_square.cpp -c
@@ -38,11 +41,11 @@ astar.a: a_star/*.cpp a_star/*.h
 	cd a_star && make OS=$(OS) && cd ..
 	
 JavaGUI: $(JAVA_GUI_PATH)/*.java
-	cd $(JAVA_GUI_PATH) && make && cd ..
+	pushd . && cd $(JAVA_GUI_PATH) && make && popd
 	
 clean:
 	rm -f *.o *.class
 	rm -f $(OUTPUT_PATH)/*
-	rm -f landscape landscape.exe JavaGUI $(JAVA_GUI_PATH)/landscape $(JAVA_GUI_PATH)/landscape.exe
-	cd $(JAVA_GUI_PATH) && make clean && cd ..
+	rm -f $(BIN_PATH)/$(BIN)
+	pushd . && cd $(JAVA_GUI_PATH) && make clean && popd
 	cd a_star && make clean && cd ..
