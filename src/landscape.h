@@ -23,6 +23,7 @@ class landscapeAlgorithm {
 	static const string diamond_square;
 	static const string hill_algorithm;
 	static const string perlin_noise;
+	static const string cellular_automata;
 	
 	string type;
 	landscapeCell *landscape;

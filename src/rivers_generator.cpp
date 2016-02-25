@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "rivers_generator.h"
 
+vector<vector<int> > rivers;
+
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
 	if (x < 0 || y < 0 || x >= mapSize || y >= mapSize)
 		return false;

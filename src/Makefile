@@ -1,4 +1,4 @@
-CFLAGS = -g
+CFLAGS = -O3
 
 ifeq ($(OS),win) 
 	CPP=i686-w64-mingw32-g++
@@ -16,10 +16,10 @@ BIN_PATH=../bin
 
 all: $(BIN) JavaGUI
 
-$(BIN): diamond_square.o hill_algorithm.o perlin_noise.o rivers_generator.o landscape.o astar.a
+$(BIN): diamond_square.o hill_algorithm.o perlin_noise.o rivers_generator.o cellular_automata.o landscape.o astar.a
 	mkdir -p $(OUTPUT_PATH)
 	mkdir -p $(BIN_PATH)
-	$(CPP) $(CFLAGS) diamond_square.o landscape.o hill_algorithm.o perlin_noise.o rivers_generator.o a_star/astar.a -o $(BIN) $(LDFLAGS)
+	$(CPP) $(CFLAGS) diamond_square.o landscape.o hill_algorithm.o perlin_noise.o cellular_automata.o rivers_generator.o a_star/astar.a -o $(BIN) $(LDFLAGS)
 	mv $(BIN) $(BIN_PATH)
 	
 diamond_square.o: diamond_square.h diamond_square.cpp
@@ -30,6 +30,9 @@ hill_algorithm.o: hill_algorithm.h hill_algorithm.cpp
 	
 perlin_noise.o: perlin_noise.h perlin_noise.cpp
 	$(CPP) $(CFLAGS) perlin_noise.cpp -c
+	
+cellular_automata.o: cellular_automata.h cellular_automata.cpp
+	$(CPP) $(CFLAGS) cellular_automata.cpp -c
 	
 rivers_generator.o: rivers_generator.cpp rivers_generator.h
 	$(CPP) $(CFLAGS) rivers_generator.cpp -c

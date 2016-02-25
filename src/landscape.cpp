@@ -10,13 +10,18 @@
 #include "diamond_square.h"
 #include "hill_algorithm.h"
 #include "perlin_noise.h"
+#include "cellular_automata.h"
 #include "rivers_generator.h"
 
 using namespace std;
 
+int rivers_number = 10, river_length = 20, river_width = 2;
+int gens = 20;
+
 const string landscapeAlgorithm::diamond_square = "diamond_square";
 const string landscapeAlgorithm::hill_algorithm = "hill_algorithm";
 const string landscapeAlgorithm::perlin_noise = "perlin_noise";
+const string landscapeAlgorithm::cellular_automata = "cellular_automata";
 
 landscapeAlgorithm::landscapeAlgorithm(const string &type) {
 	if (checkAlgorithm(type))
@@ -28,6 +33,7 @@ landscapeAlgorithm::landscapeAlgorithm(const string &type) {
 	numberOfIslands = 1;
 	islandSize = NORMAL;
 	randomSeed = 0;
+	srand(time(NULL));
 	startHeight = 5;
 	roughness = 0.1;
 	outHeight = -5;
@@ -43,7 +49,7 @@ landscapeAlgorithm::~landscapeAlgorithm() {
 }
 
 int landscapeAlgorithm::checkAlgorithm(const string&type) {
-	if (type != diamond_square && type != hill_algorithm && type != perlin_noise)
+	if (type != diamond_square && type != hill_algorithm && type != perlin_noise && type != cellular_automata)
 		return 1;
 	else
 		return 0;
@@ -138,9 +144,6 @@ void landscapeAlgorithm::printLandscape() {
 		fs.close();
 }
 
-int rivers_number = 10, river_length = 20, river_width = 2;
-vector<vector<int> > rivers;
-
 float minMaxRandom(float min, float max) {
 	return min + rand()/(RAND_MAX/(max - min));
 }
@@ -168,6 +171,8 @@ void landscapeAlgorithm::generateLandscape() {
 		}
 	} else if (type == perlin_noise)
 		PerlinNoise(heights, mapSize + 1, minMaxRandom(M_PI*2*10, M_PI*3*10), 5, persistence, frequency, amplitude);
+	else if (type == cellular_automata)
+		CellularAutomaton(heights, mapSize + 1, gens);
 	else //default
 		generateDiamondSquareHeights(heights, mapSize + 1, startHeight, roughness, size, outHeight, 0, 0, mapSize, mapSize);
 	for (int i = 0; i < length; i++) {
@@ -224,6 +229,7 @@ int main(int argc, char **argv) {
 		PARSE_INT_VAL("--rivers_number", rivers_number);
 		PARSE_INT_VAL("--river_length", river_length);
 		PARSE_INT_VAL("--river_width", river_width);
+		PARSE_INT_VAL("--gens", gens);
 		if (strcmp(argv[i], "--noise") == 0) {
 			alg.setHillNoise(1);
 			continue;
