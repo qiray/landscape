@@ -90,7 +90,7 @@ int landscapeAlgorithm::setIslandSize(int size) {
 }
 
 int landscapeAlgorithm::setRandomSeed(int seed) {
-	srand(seed == 0 ? time(NULL) : randomSeed);
+	srand(seed == 0 ? time(NULL) : seed);
 	return randomSeed = seed;
 }
 
