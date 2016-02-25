@@ -1,5 +1,5 @@
 #include <cstring>
-#include <iostream>
+#include <cstdlib>
 #include "cellular_automata.h"
 
 inline float oneStepCell(float *heights, int mapSize, int x, int y) {
@@ -28,7 +28,7 @@ void oneStep(float *heights, int mapSize) {
 void CellularAutomaton(float *heights, int mapSize, int gens) {
 	int length = mapSize*mapSize;
 	for (int i = 0; i < length; i++)
-		heights[i] = minMaxRandom(-128, 127);
+		heights[i] = minMaxRandom(-127, 127);
 	for (int i = 0; i < gens; i++)
 		oneStep(heights, mapSize);
 }

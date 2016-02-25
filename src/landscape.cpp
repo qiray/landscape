@@ -90,7 +90,7 @@ int landscapeAlgorithm::setIslandSize(int size) {
 }
 
 int landscapeAlgorithm::setRandomSeed(int seed) {
-	srand(randomSeed == 0 ? time(NULL) : randomSeed);
+	srand(seed == 0 ? time(NULL) : randomSeed);
 	return randomSeed = seed;
 }
 
@@ -169,11 +169,11 @@ void landscapeAlgorithm::generateLandscape() {
 				heights[i] += heights2[i];
 			delete [] heights2;
 		}
-	} else if (type == perlin_noise)
+	} else if (type == perlin_noise) {
 		PerlinNoise(heights, mapSize + 1, minMaxRandom(M_PI*2*10, M_PI*3*10), 5, persistence, frequency, amplitude);
-	else if (type == cellular_automata)
+	} else if (type == cellular_automata) {
 		CellularAutomaton(heights, mapSize + 1, gens);
-	else //default
+	} else //default
 		generateDiamondSquareHeights(heights, mapSize + 1, startHeight, roughness, size, outHeight, 0, 0, mapSize, mapSize);
 	for (int i = 0; i < length; i++) {
 		int tmp = round((heights[i + i/mapSize] + heights[i + i/mapSize + 1] + heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4); //average value
