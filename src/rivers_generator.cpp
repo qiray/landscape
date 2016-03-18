@@ -107,6 +107,10 @@ void generateRivers(landscapeAlgorithm &alg, int number, int length, int width) 
 			highlands.push_back(i);
 	}
 	int highlandsSize = highlands.size();
+	if (highlandsSize == 0) {
+		delete [] tempMap;
+		return;
+	}
 	for (int i = 0; i < highlandsSize; i++)
 		average += (double)landscape[highlands[i]]/highlandsSize;
 	average *= factor;

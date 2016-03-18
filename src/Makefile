@@ -1,4 +1,4 @@
-CFLAGS = -O3
+CFLAGS = -g
 
 ifeq ($(OS),win) 
 	CPP=i686-w64-mingw32-g++
