@@ -14,6 +14,7 @@ public class JavaGUI extends JPanel {
 		islandsTextField, amplitudeTextField, persistenceTextField, frequencyTextField,
 		riversNumberTextField, riverLengthTextField, riverWidthTextField;
 	JComboBox<String> algoritmsList;
+	JPanel diamondSquareElements, perlinNoiseElements;
 
 	public Color getColorFromInt(int c) {
 		if (c < -40)
@@ -64,20 +65,21 @@ public class JavaGUI extends JPanel {
 			e.printStackTrace(); 
 		}
 	}
+	
+	private String algorithmNameByIndex(int n) {
+		switch (n) {
+			case 1:
+				return "hill_algorithm ";
+			case 2:
+				return "perlin_noise ";
+			default:
+				return "diamond_square ";
+		}	
+	}
 
 	private String makeArguments() {
 		String result = " --size 512 --noise --output " + mapNameTextField.getText() + " --algorithm ";
-		switch (algoritmsList.getSelectedIndex()) {
-			case 1:
-				result += "hill_algorithm ";
-				break;
-			case 2:
-				result += "perlin_noise ";
-				break;
-			case 0:
-			default:
-				result += "diamond_square ";
-		}
+		result += algorithmNameByIndex(algoritmsList.getSelectedIndex());
 		String temp = seedTextField.getText();
 		result += "--seed ";
 		if (temp.equals(""))
@@ -114,14 +116,14 @@ public class JavaGUI extends JPanel {
 		}
 	}
 	
-	private JTextField makeLabelText(String labelText, int x, int y, int w, int h, String fieldText, int fieldX, int fieldY, int fieldWidth) {
+	private JTextField makeLabelText(JPanel panel, String labelText, int x, int y, int w, int h, String fieldText, int fieldX, int fieldY, int fieldWidth) {
 		JLabel label = new JLabel(labelText);
 		label.setBounds(x, y, w, h);
-		this.add(label);
+		panel.add(label);
 		JTextField textField = new JTextField(20);
 		textField.setText(fieldText);
 		textField.setBounds(fieldX, fieldY, fieldWidth, h);
-		this.add(textField);
+		panel.add(textField);
 		return textField;
 	}
 	
@@ -237,23 +239,50 @@ public class JavaGUI extends JPanel {
 		};
 		algoritmsList = new JComboBox<>(algoritmsTexts);
 		algoritmsList.setBounds(600, 0, 150, 25);
+		algoritmsList.addActionListener (new ActionListener () { //for changing algorithms
+			public void actionPerformed(ActionEvent e) {
+				switch(algoritmsList.getSelectedIndex()) {
+					case 0: //diamond_square
+						diamondSquareElements.setVisible(true);
+						perlinNoiseElements.setVisible(false);
+						break;
+					case 1: //hill_algorithm
+						diamondSquareElements.setVisible(true);
+						perlinNoiseElements.setVisible(false);
+						break;
+					case 2: //perlin_noise
+						perlinNoiseElements.setVisible(true);
+						diamondSquareElements.setVisible(false);
+						break;
+				}
+			}
+		});
 		this.add(algoritmsList);
 		
-		seedTextField = makeLabelText("Seed (empty for random):", 520, 30, 220, 25, "", 520, 60, 230);
-		roughnessTextField = makeLabelText("Roughness:", 520, 90, 100, 25, "0.2", 650, 90, 100);
-		islandsTextField = makeLabelText("Islands (hill algorithm):", 520, 120, 230, 25, "4", 700, 120, 50);
-		startHeightTextField = makeLabelText("Init height (diamond square):", 520, 150, 230, 25, "5", 520, 180, 230);
-		riversNumberTextField = makeLabelText("Number of rivers:", 520, 210, 230, 25, "10", 660, 210, 90);
-		riverLengthTextField = makeLabelText("River's min length:", 520, 240, 230, 25, "20", 660, 240, 90);
-		riverWidthTextField = makeLabelText("River's max width:", 520, 270, 230, 25, "3", 660, 270, 90);
+		diamondSquareElements = new JPanel();
+		diamondSquareElements.setLayout(null);
+		diamondSquareElements.setBounds(520, 90, 250, 90);
+		this.add(diamondSquareElements);
+		diamondSquareElements.setVisible(false);
+		perlinNoiseElements = new JPanel();
+		perlinNoiseElements.setLayout(null);
+		perlinNoiseElements.setBounds(520, 90, 250, 90);
+		this.add(perlinNoiseElements);
+		perlinNoiseElements.setVisible(false);
 		
-		JLabel perlinHillInfoLabel = new JLabel("Perlin noise algorithm only:");
-		perlinHillInfoLabel.setBounds(520, 300, 230, 25);
-		this.add(perlinHillInfoLabel);
+		seedTextField = makeLabelText(this, "Seed (empty for random):", 520, 30, 220, 25, "", 520, 60, 230);
 		
-		amplitudeTextField = makeLabelText("Amplitude:", 520, 330, 100, 25, "0.25", 630, 330, 120);
-		persistenceTextField = makeLabelText("Persistence:", 520, 360, 100, 25, "0.7", 630, 360, 120);
-		frequencyTextField = makeLabelText("Frequency:", 520, 390, 100, 25, "0.01", 630, 390, 120);
+		roughnessTextField = makeLabelText(diamondSquareElements, "Roughness:", 0, 0, 100, 25, "0.2", 140, 0, 90);
+		startHeightTextField = makeLabelText(diamondSquareElements, "Init height:", 0, 30, 100, 25, "5", 140, 30, 90);
+		islandsTextField = makeLabelText(diamondSquareElements, "Islands:", 0, 60, 230, 25, "4", 140, 60, 90);
+		
+		riversNumberTextField = makeLabelText(this, "Number of rivers:", 520, 180, 230, 25, "10", 660, 180, 90);
+		riverLengthTextField = makeLabelText(this, "River's min length:", 520, 210, 230, 25, "20", 660, 210, 90);
+		riverWidthTextField = makeLabelText(this, "River's max width:", 520, 240, 230, 25, "3", 660, 240, 90);
+		
+		amplitudeTextField = makeLabelText(perlinNoiseElements, "Amplitude:", 0, 0, 100, 25, "0.25", 140, 0, 90);
+		persistenceTextField = makeLabelText(perlinNoiseElements, "Persistence:", 0, 30, 100, 25, "0.7", 140, 30, 90);
+		frequencyTextField = makeLabelText(perlinNoiseElements, "Frequency:", 0, 60, 100, 25, "0.01", 140, 60, 90);
 		
 		JButton generateLandscapeButton = new JButton("Generate landscape");
 		generateLandscapeButton.addActionListener(new AbstractAction() {
@@ -264,7 +293,7 @@ public class JavaGUI extends JPanel {
 				repaint();
 			}
 		});
-		generateLandscapeButton.setBounds(520, 420, 230, 25);
+		generateLandscapeButton.setBounds(520, 270, 230, 25);
 		this.add(generateLandscapeButton);
 		this.loadConfig("settings.cfg");
 	}
