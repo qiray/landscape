@@ -10,7 +10,7 @@ vector<vector<int> > rivers;
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
 	if (x < 0 || y < 0 || x >= mapSize || y >= mapSize)
 		return false;
-	if(landscape[y*mapSize + x] <= -1 || landscape[y*mapSize + x] == 0 && rand()%101 > 90) {
+	if((landscape[y*mapSize + x] <= -1 || landscape[y*mapSize + x] == 0) && rand()%101 > 90) {
 		for (int i = x - 1; i <= x + 1; i += 2)
 			if (i >= 0 && i < mapSize && landscape[y*mapSize + i] > 0) {
 				finish = y*mapSize + i;
@@ -21,8 +21,8 @@ inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &f
 				finish = i*mapSize + x;
 				return true;
 			}
-	} else
-		return false;
+	}
+	return false;
 }
 
 inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {

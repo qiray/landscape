@@ -159,7 +159,7 @@ void landscapeAlgorithm::generateLandscape() {
 	int length = mapSize*mapSize;
 	int heightsLength = (mapSize + 1)*(mapSize + 1);
 	float * heights = new float [heightsLength];
-	int size = mapSize/(numberOfIslands & (numberOfIslands - 1) == 0 ? numberOfIslands : nearestPower2(numberOfIslands));
+	int size = mapSize/((numberOfIslands & (numberOfIslands - 1)) == 0 ? numberOfIslands : nearestPower2(numberOfIslands));
 	if (type == hill_algorithm) {
 		Hill_algorithm(heights, mapSize + 1, numberOfIslands, islandSize, roughness, mapSize, mapSize > 128 ? mapSize/5 : 50, MAX_LANDSCAPE_CELL*4);
 		if (hillNoise) {
@@ -192,19 +192,19 @@ void generateWorld(landscapeAlgorithm &alg) {
 		func(atoi(argv[++i])); \
 		continue; \
 	}
-	
+
 #define PARSE_INT_VAL(desc, val) \
 	if (strcmp(argv[i], desc) == 0) { \
 		val = atoi(argv[++i]); \
 		continue; \
 	}
-	
+
 #define PARSE_FLOAT(desc, func) \
 	if (strcmp(argv[i], desc) == 0) { \
 		func(atof(argv[++i])); \
 		continue; \
 	}
-	
+
 #define PARSE_STRING(desc, func) \
 	if (strcmp(argv[i], desc) == 0) { \
 		func(argv[++i]); \

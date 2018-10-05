@@ -2,18 +2,6 @@
 
 stack coordStack;//stack struct (described below)
 
-string intToStr(unsigned short n) { //function converts unsigned short to string
-   string tmp;
-   if (n == 0)
-      return "0";
-   while (n > 0) {
-      char t[] = {n%10 + '0'};
-      tmp.insert(0, t);
-      n /= 10;
-   }
-   return tmp;
-}
-
 mapField::mapField(unsigned short Size) {
    if (Size == 0) 
       Size = 1;
