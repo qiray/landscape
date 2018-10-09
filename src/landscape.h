@@ -7,17 +7,10 @@ using namespace std;
 
 #define LANDSCAPE_H
 
-//sizes: //TODO: use these sizes
-#define TINY 1
-#define SMALL 2
-#define NORMAL 3
-#define BIG 4
-#define LARGE 5
-
 typedef char landscapeCell;
 #define MAX_LANDSCAPE_CELL 127
 
-extern vector<vector<int> > rivers; //TODO: maybe move to class
+extern vector<vector<int> > rivers; //TODO: move to class
 
 class landscapeAlgorithm {
 	static const string diamond_square;

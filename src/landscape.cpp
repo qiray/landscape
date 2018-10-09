@@ -13,6 +13,9 @@
 #include "cellular_automata.h"
 #include "rivers_generator.h"
 
+//TODO: refactoring
+//TODO: Qt GUI
+
 using namespace std;
 
 int rivers_number = 10, river_length = 20, river_width = 2;
@@ -31,7 +34,7 @@ landscapeAlgorithm::landscapeAlgorithm(const string &type) {
 	outfileName = "";
 	mapSize = 256; //default values
 	numberOfIslands = 1;
-	islandSize = NORMAL;
+	islandSize = 3;
 	randomSeed = 0;
 	srand(time(NULL));
 	startHeight = 5;
