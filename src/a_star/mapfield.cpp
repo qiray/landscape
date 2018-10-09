@@ -138,8 +138,8 @@ bool stack::push(int x) {
       return 1;
    } else { 
       return 0;
-   }    
-}     
+   }
+}
 
 void stack::emptyStack() {
    stackPointer = 0;

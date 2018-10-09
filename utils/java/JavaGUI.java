@@ -174,7 +174,7 @@ public class JavaGUI extends JPanel {
 			}
 			fr.close();
 			br.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.err.println("Failed to load config " + fileName);
 			e.printStackTrace(); 
 		}

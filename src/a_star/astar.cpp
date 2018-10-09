@@ -106,7 +106,7 @@ bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &w
          while (temp != start) {//while start node isn't reached
             temp = temp->parentNode;//go back to start through nodes' parents
             //mapArray[temp->x + temp->y*size] = blockedCell; //river's influence
-            way.push_back(temp->x + temp->y*size);                   
+            way.push_back(temp->x + temp->y*size);
          }
          reverse(way.begin(), way.end());
          return true;///path found
@@ -133,4 +133,3 @@ void mapField::makeRegions () {
    }
    delete [] coordStack.stack;
 }
-
