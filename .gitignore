@@ -4,3 +4,4 @@ output/*
 bin/*
 utils/java/settings.cfg
 .vscode
+build-*
