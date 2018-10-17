@@ -11,6 +11,8 @@ public:
 public slots:
     QString generateMap(const QString& rawdata);
     QString generateMapFromFile(const QString& filename);
+signals:
+    void error(const QString& msg);
 private:
     Q_OBJECT
     static QColor getColorFromInt(int c);

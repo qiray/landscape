@@ -26,6 +26,7 @@ ApplicationWindow {
 
     DrawMap {
         id: drawMap
+        onError: console.log(msg)
     }
 
     function openFile(fileUrl) {
@@ -38,8 +39,7 @@ ApplicationWindow {
 
     function redrawMap() {
         //TODO: draw different size maps
-        var mapdata = openFile(mapFileText.text)
-        var imageBase64 = drawMap.generateMap(mapdata)
+        var imageBase64 = drawMap.generateMapFromFile(mapFileText.text)
         mapImage.source = "data:image/png;base64," + imageBase64
     }
 

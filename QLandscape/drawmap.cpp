@@ -36,6 +36,10 @@ QString DrawMap::imageToBase64(const QImage& image) {
 }
 
 QString DrawMap::generateMap(const QString& rawdata) {
+    if (rawdata == "") {
+        emit error(tr("Can't generate map: no data."));
+        return QString();
+    }
     QStringList mapLines = rawdata.split('\n');
     int len = mapLines.length();
     int mapSize = mapLines[0].toInt();
