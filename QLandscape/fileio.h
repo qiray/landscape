@@ -2,6 +2,7 @@
 #define FILEIO_H
 
 #include <QObject>
+#include <QString>
 
 class FileIO : public QObject
 {

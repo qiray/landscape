@@ -2,12 +2,19 @@
 #define DRAWMAP_H
 
 #include <QObject>
+#include <QImage>
 
 class DrawMap: public QObject
 {
-    Q_OBJECT
 public:
     explicit DrawMap(QObject *parent = nullptr);
+public slots:
+    QString generateMap(const QString& rawdata);
+    QString generateMapFromFile(const QString& filename);
+private:
+    Q_OBJECT
+    static QColor getColorFromInt(int c);
+    QString imageToBase64(const QImage& image);
 };
 
 #endif // DRAWMAP_H
