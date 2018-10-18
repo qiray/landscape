@@ -2,7 +2,7 @@
 #include <QBuffer>
 #include "drawmap.h"
 #include "fileio.h"
-///home/osuser/src/landscape/output/1.map
+
 DrawMap::DrawMap(QObject *parent) :
     QObject(parent)
 {
@@ -54,7 +54,7 @@ QString DrawMap::generateMap(const QString& rawdata) {
             int value = line[j].toInt(&ok);
             if (!ok)
                 continue;
-            img.setPixelColor(i - 1, j, getColorFromInt(value));
+            img.setPixelColor(j, i - 1, getColorFromInt(value));
         }
     }
     return imageToBase64(img);

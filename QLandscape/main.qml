@@ -50,7 +50,10 @@ ApplicationWindow {
                 text: qsTr("Open")
                 onTriggered: fileDialog.open()
             }
-            MenuItem { text: qsTr("Close") }
+            MenuItem {
+                text: qsTr("Close")
+                onTriggered: Qt.quit()
+            }
         }
     }
 
@@ -70,8 +73,9 @@ ApplicationWindow {
     }
 
     Rectangle {
+        id: mapRect
         height: parent.height
-        width: 560
+        width: 522
         anchors.left: parent.left
         anchors.top: parent.top
 
@@ -79,14 +83,16 @@ ApplicationWindow {
             id: mapFileText
             anchors {
                 left: parent.left
-                leftMargin: 10
+                leftMargin: 5
                 top: parent.top
                 topMargin: 5
             }
             width: 200
+            text: ""
             onTextChanged: {
                 redrawMap()
             }
+            Component.onCompleted: this.text = "../output/1.map" //run on load
         }
 
         Button {
@@ -108,12 +114,72 @@ ApplicationWindow {
             height: 512
             anchors {
                 left: parent.left
-                leftMargin: 20
+                leftMargin: 5
                 top: parent.top
                 topMargin: 40
             }
             source: ""
+
+            //TODO: save map as image
         }
+    }
+    Rectangle {
+        height: parent.height
+        anchors.left: mapRect.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        color: "#CCCCCC"
+
+        Text {
+            anchors.top: parent.top
+            anchors.topMargin: 5
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            height: 20
+            text: qsTr("Algorithm:")
+        }
+
+        ComboBox {
+            anchors.top: parent.top
+            anchors.topMargin: 5
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+
+            currentIndex: 0
+            model: ListModel {
+                id: cbItems
+                ListElement { text: "Diamond square"; value: "0" }
+                ListElement { text: "Hill algorithm"; value: "1" }
+                ListElement { text: "Perlin noise"; value: "2" }
+            }
+            width: 150
+            height: 20
+            onCurrentIndexChanged: console.debug(cbItems.get(currentIndex).text + ", " + cbItems.get(currentIndex).value)
+        }
+
+        Text {
+            anchors.top: parent.top
+            anchors.topMargin: 40
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            height: 20
+            text: qsTr("Seed (empty for random):")
+        }
+
+        TextField {
+            id: seedText
+            anchors.top: parent.top
+            anchors.topMargin: 60
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            width: parent.width - 10
+        }
+
+        Rectangle {
+            id: riversRect
+
+        }
+
     }
     //TODO: call extern application to generate map, other design
 }
