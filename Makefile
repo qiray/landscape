@@ -1,4 +1,6 @@
 
+SHELL:=/bin/bash
+
 .PHONY: all clean src utils
 
 all: src utils

@@ -1,4 +1,5 @@
 CFLAGS = -g
+SHELL:=/bin/bash
 
 ifeq ($(OS),win) 
 	CPP=i686-w64-mingw32-g++

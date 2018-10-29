@@ -65,4 +65,3 @@ QString DrawMap::generateMapFromFile(const QString& filename) {
     QString rawdata = fileIO.openFile(filename);
     return generateMap(rawdata);
 }
-
