@@ -15,7 +15,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     fileio.cpp \
-    drawmap.cpp
+    drawmap.cpp \
+    executebinary.cpp
 
 RESOURCES += qml.qrc
 
@@ -32,4 +33,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     fileio.h \
-    drawmap.h
+    drawmap.h \
+    executebinary.h

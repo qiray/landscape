@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>style/RightTextField.qml</file>
+        <file>style/LeftText.qml</file>
     </qresource>
 </RCC>

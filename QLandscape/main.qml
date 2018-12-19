@@ -4,8 +4,11 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
+import "style"
+
 import FileIO 1.0
 import DrawMap 1.0
+import ExecuteBinary 1.0
 
 ApplicationWindow {
     property int windowWidth: 800
@@ -26,6 +29,11 @@ ApplicationWindow {
 
     DrawMap {
         id: drawMap
+        onError: console.log(msg)
+    }
+
+    ExecuteBinary {
+        id: exec
         onError: console.log(msg)
     }
 
@@ -128,7 +136,7 @@ ApplicationWindow {
         anchors.left: mapRect.right
         anchors.right: parent.right
         anchors.top: parent.top
-        color: "#CCCCCC"
+        color: "#AAAAAA"
 
         Text {
             anchors.top: parent.top
@@ -154,7 +162,20 @@ ApplicationWindow {
             }
             width: 150
             height: 20
-            onCurrentIndexChanged: console.debug(cbItems.get(currentIndex).text + ", " + cbItems.get(currentIndex).value)
+            onCurrentIndexChanged: {
+                var index = cbItems.get(currentIndex).value
+                try {
+                    if (index < 2) {
+                        diamondHillSettings.visible = true
+                        perlinSettings.visible = false
+                    } else {
+                        diamondHillSettings.visible = false
+                        perlinSettings.visible = true
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         }
 
         Text {
@@ -176,10 +197,153 @@ ApplicationWindow {
         }
 
         Rectangle {
-            id: riversRect
+            id: diamondHillSettings
+            y: 100
+            x: 0
+            height: 100
+            width: parent.width
+            color: parent.color
 
+            LeftText {
+                anchors.topMargin: 5
+                text: qsTr("Roughness")
+            }
+            RightTextField {
+                id: roughnessText
+                validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
+            }
+
+            LeftText {
+                anchors.topMargin: 35
+                text: qsTr("Init height")
+            }
+            RightTextField {
+                id: initHeightText
+                anchors.topMargin: 30
+                validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
+            }
+
+            LeftText {
+                anchors.topMargin: 65
+                text: qsTr("Islands")
+            }
+            RightTextField {
+                id: islandsText
+                anchors.topMargin: 60
+                validator: RegExpValidator{regExp: /\d+/}
+            }
         }
 
+        Rectangle {
+            id: perlinSettings
+            visible: false
+            y: 100
+            x: 0
+            height: 100
+            width: parent.width
+            color: parent.color
+
+            LeftText {
+                anchors.topMargin: 5
+                text: qsTr("Amplitude")
+            }
+            RightTextField {
+                id: amplitudeText
+                validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
+            }
+
+            LeftText {
+                anchors.topMargin: 35
+                text: qsTr("Persistence")
+            }
+            RightTextField {
+                id: persistenceText
+                anchors.topMargin: 30
+                validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
+            }
+
+            LeftText {
+                anchors.topMargin: 65
+                text: qsTr("Frequency")
+            }
+            RightTextField {
+                id: frequencyText
+                anchors.topMargin: 60
+                validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
+            }
+        }
+
+        Rectangle {
+            id: riversRect
+            y: 200
+            x: 0
+            height: 100
+            width: parent.width
+            color: parent.color
+
+            LeftText {
+                anchors.topMargin: 5
+                text: qsTr("Rivers number")
+            }
+            RightTextField {
+                id: riversText
+                validator: RegExpValidator{regExp: /\d+/}
+            }
+
+            LeftText {
+                anchors.topMargin: 35
+                text: qsTr("River min length")
+            }
+            RightTextField {
+                id: riversLengthText
+                anchors.topMargin: 30
+                validator: RegExpValidator{regExp: /\d+/}
+            }
+
+            LeftText {
+                anchors.topMargin: 65
+                text: qsTr("River max width")
+            }
+            RightTextField {
+                id: riversWidthText
+                anchors.topMargin: 60
+                validator: RegExpValidator{regExp: /\d+/}
+            }
+        }
+
+        Button {
+            anchors.top: parent.top
+            anchors.topMargin: 300
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            width: parent.width - 10
+            height: 30
+            text: "Generate map"
+            onClicked: {
+                //TODO: call extern application to generate map
+                console.log('1')
+            }
+        }
     }
-    //TODO: call extern application to generate map, other design
 }
+
+//private String makeArguments() {
+//    String result = " --size 512 --noise --output " + mapNameTextField.getText() + " --algorithm ";
+//    result += algorithmNameByIndex(algoritmsList.getSelectedIndex());
+//    String temp = seedTextField.getText();
+//    result += "--seed ";
+//    if (temp.equals(""))
+//        result += (int)(Math.random()*2147483647) + " ";
+//    else
+//        result += Integer.parseInt(temp) + " ";
+//    result += "--height " + Integer.parseInt(startHeightTextField.getText()) + " ";
+//    result += "--roughness " + Float.parseFloat(roughnessTextField.getText()) + " ";
+//    result += "--islands " + Integer.parseInt(islandsTextField.getText()) + " ";
+//    result += "--amplitude " + Float.parseFloat(amplitudeTextField.getText()) + " ";
+//    result += "--persistence " + Float.parseFloat(persistenceTextField.getText()) + " ";
+//    result += "--frequency " + Float.parseFloat(frequencyTextField.getText()) + " ";
+//    result += "--rivers_number " + Integer.parseInt(riversNumberTextField.getText()) + " ";
+//    result += "--river_length " + Integer.parseInt(riverLengthTextField.getText()) + " ";
+//    result += "--river_width " + Integer.parseInt(riverWidthTextField.getText()) + " ";
+//    return result;
+//}
