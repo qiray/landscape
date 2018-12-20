@@ -14,6 +14,7 @@ public slots:
 
 signals:
     void error(const QString& msg);
+    void finish();
 
 };
 

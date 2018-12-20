@@ -35,6 +35,7 @@ ApplicationWindow {
     ExecuteBinary {
         id: exec
         onError: console.log(msg)
+        onFinish: redrawMap()
     }
 
     function openFile(fileUrl) {
@@ -152,13 +153,14 @@ ApplicationWindow {
             anchors.topMargin: 5
             anchors.right: parent.right
             anchors.rightMargin: 5
+            id: algorithmSelector
 
             currentIndex: 0
             model: ListModel {
                 id: cbItems
-                ListElement { text: "Diamond square"; value: "0" }
-                ListElement { text: "Hill algorithm"; value: "1" }
-                ListElement { text: "Perlin noise"; value: "2" }
+                ListElement { text: "Diamond square"; value: "0"; name: 'diamond_square' }
+                ListElement { text: "Hill algorithm"; value: "1"; name: 'hill_algorithm' }
+                ListElement { text: "Perlin noise"; value: "2"; name: 'perlin_noise' }
             }
             width: 150
             height: 20
@@ -194,6 +196,7 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.leftMargin: 5
             width: parent.width - 10
+            validator: RegExpValidator{regExp: /\d+/}
         }
 
         Rectangle {
@@ -320,30 +323,21 @@ ApplicationWindow {
             height: 30
             text: "Generate map"
             onClicked: {
-                //TODO: call extern application to generate map
-                console.log('1')
+                exec.runBinary("./landscape", makeArguments());
             }
         }
     }
+
+    function makeArguments() {
+        var result = ['--size', '512', '--noise', '--output', mapFileText.text, '--algorithm', cbItems.get(algorithmSelector.currentIndex).name]
+        if (seedText.text != '') {
+            result.push('--seed', seedText.text)
+        }
+        result = result.concat(['--height', initHeightText.text, '--roughness', roughnessText.text, '--islands', islandsText.text])
+        result = result.concat(['--amplitude', amplitudeText.text, '--persistence', amplitudeText.text, '--frequency', frequencyText.text])
+        result = result.concat(['--rivers_number', riversText.text, '--river_length', riversLengthText.text, '--river_width', riversWidthText.text])
+        return result
+    }
 }
 
-//private String makeArguments() {
-//    String result = " --size 512 --noise --output " + mapNameTextField.getText() + " --algorithm ";
-//    result += algorithmNameByIndex(algoritmsList.getSelectedIndex());
-//    String temp = seedTextField.getText();
-//    result += "--seed ";
-//    if (temp.equals(""))
-//        result += (int)(Math.random()*2147483647) + " ";
-//    else
-//        result += Integer.parseInt(temp) + " ";
-//    result += "--height " + Integer.parseInt(startHeightTextField.getText()) + " ";
-//    result += "--roughness " + Float.parseFloat(roughnessTextField.getText()) + " ";
-//    result += "--islands " + Integer.parseInt(islandsTextField.getText()) + " ";
-//    result += "--amplitude " + Float.parseFloat(amplitudeTextField.getText()) + " ";
-//    result += "--persistence " + Float.parseFloat(persistenceTextField.getText()) + " ";
-//    result += "--frequency " + Float.parseFloat(frequencyTextField.getText()) + " ";
-//    result += "--rivers_number " + Integer.parseInt(riversNumberTextField.getText()) + " ";
-//    result += "--river_length " + Integer.parseInt(riverLengthTextField.getText()) + " ";
-//    result += "--river_width " + Integer.parseInt(riverWidthTextField.getText()) + " ";
-//    return result;
-//}
+//TODO: save config (JSON maybe?)
