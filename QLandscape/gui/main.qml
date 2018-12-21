@@ -89,7 +89,7 @@ ApplicationWindow {
             onTextChanged: {
                 redrawMap()
             }
-            Component.onCompleted: this.text = "../output/1.map" //run on load
+            Component.onCompleted: this.text = "1.map" //run on load
         }
 
         Button {
@@ -298,7 +298,7 @@ ApplicationWindow {
             height: 30
             text: "Generate map"
             onClicked: {
-                exec.runBinary("./landscape", makeArguments());
+                exec.runBinary("../landscape/landscape", makeArguments());
             }
         }
     }

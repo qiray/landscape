@@ -1,5 +1,5 @@
 #include "landscape.h"
-#include "a_star/mapfield.h"
+#include "mapfield.h"
 
 #ifndef RIVERS_GENERATOR_H
 

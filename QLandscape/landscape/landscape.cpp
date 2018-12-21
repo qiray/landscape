@@ -20,8 +20,8 @@
 
 using namespace std;
 
-int rivers_number = 10, river_length = 20, river_width = 2;
-int gens = 20;
+static int rivers_number = 10, river_length = 20, river_width = 2;
+static int gens = 20;
 
 const string landscapeAlgorithm::diamond_square = "diamond_square";
 const string landscapeAlgorithm::hill_algorithm = "hill_algorithm";
