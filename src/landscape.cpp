@@ -15,6 +15,8 @@
 
 //TODO: refactoring
 //TODO: Qt GUI
+//TODO: license
+//TODO: readme
 
 using namespace std;
 
@@ -230,8 +232,6 @@ int main(int argc, char **argv) {
         PARSE_FLOAT("--persistence", alg.setPersistence);
         PARSE_FLOAT("--frequency", alg.setFrequency);
         PARSE_INT_VAL("--rivers_number", rivers_number);
-        PARSE_INT_VAL("--river_length", river_length);
-        PARSE_INT_VAL("--river_width", river_width);
         PARSE_INT_VAL("--gens", gens);
         if (strcmp(argv[i], "--noise") == 0) {
             alg.setHillNoise(1);

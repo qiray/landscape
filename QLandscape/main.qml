@@ -13,6 +13,8 @@ import ExecuteBinary 1.0
 ApplicationWindow {
     property int windowWidth: 800
     property int windowHeight: 600
+    id: mainWindow
+    property string settingsPath: "settings.cfg"
     visible: true
     width: windowWidth
     minimumWidth: windowWidth
@@ -36,20 +38,6 @@ ApplicationWindow {
         id: exec
         onError: console.log(msg)
         onFinish: redrawMap()
-    }
-
-    function openFile(fileUrl) {
-        return fileIO.openFile(fileUrl)
-    }
-
-    function saveFile(fileUrl, text) {
-        return fileIO.saveFile(fileUrl, text)
-    }
-
-    function redrawMap() {
-        //TODO: draw different size maps
-        var imageBase64 = drawMap.generateMapFromFile(mapFileText.text)
-        mapImage.source = "data:image/png;base64," + imageBase64
     }
 
     menuBar: MenuBar {
@@ -213,6 +201,7 @@ ApplicationWindow {
             }
             RightTextField {
                 id: roughnessText
+                text: "0.5"
                 validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
             }
 
@@ -222,6 +211,7 @@ ApplicationWindow {
             }
             RightTextField {
                 id: initHeightText
+                text: "5"
                 anchors.topMargin: 30
                 validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
             }
@@ -232,6 +222,7 @@ ApplicationWindow {
             }
             RightTextField {
                 id: islandsText
+                text: "1"
                 anchors.topMargin: 60
                 validator: RegExpValidator{regExp: /\d+/}
             }
@@ -252,6 +243,7 @@ ApplicationWindow {
             }
             RightTextField {
                 id: amplitudeText
+                text: "0.25"
                 validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
             }
 
@@ -261,6 +253,7 @@ ApplicationWindow {
             }
             RightTextField {
                 id: persistenceText
+                text: "0.7"
                 anchors.topMargin: 30
                 validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
             }
@@ -271,6 +264,7 @@ ApplicationWindow {
             }
             RightTextField {
                 id: frequencyText
+                text: "0.01"
                 anchors.topMargin: 60
                 validator: RegExpValidator{regExp: /(\d*[.])?\d+/}
             }
@@ -278,9 +272,9 @@ ApplicationWindow {
 
         Rectangle {
             id: riversRect
-            y: 200
+            y: 190
             x: 0
-            height: 100
+            height: 30
             width: parent.width
             color: parent.color
 
@@ -290,33 +284,14 @@ ApplicationWindow {
             }
             RightTextField {
                 id: riversText
-                validator: RegExpValidator{regExp: /\d+/}
-            }
-
-            LeftText {
-                anchors.topMargin: 35
-                text: qsTr("River min length")
-            }
-            RightTextField {
-                id: riversLengthText
-                anchors.topMargin: 30
-                validator: RegExpValidator{regExp: /\d+/}
-            }
-
-            LeftText {
-                anchors.topMargin: 65
-                text: qsTr("River max width")
-            }
-            RightTextField {
-                id: riversWidthText
-                anchors.topMargin: 60
+                text: "10"
                 validator: RegExpValidator{regExp: /\d+/}
             }
         }
 
         Button {
             anchors.top: parent.top
-            anchors.topMargin: 300
+            anchors.topMargin: 220
             anchors.left: parent.left
             anchors.leftMargin: 5
             width: parent.width - 10
@@ -328,16 +303,74 @@ ApplicationWindow {
         }
     }
 
+    onClosing: {
+        saveSettings()
+    }
+    Component.onCompleted: {
+        loadSettings()
+    }
+
     function makeArguments() {
         var result = ['--size', '512', '--noise', '--output', mapFileText.text, '--algorithm', cbItems.get(algorithmSelector.currentIndex).name]
         if (seedText.text != '') {
             result.push('--seed', seedText.text)
         }
         result = result.concat(['--height', initHeightText.text, '--roughness', roughnessText.text, '--islands', islandsText.text])
-        result = result.concat(['--amplitude', amplitudeText.text, '--persistence', amplitudeText.text, '--frequency', frequencyText.text])
-        result = result.concat(['--rivers_number', riversText.text, '--river_length', riversLengthText.text, '--river_width', riversWidthText.text])
+        result = result.concat(['--amplitude', amplitudeText.text, '--persistence', persistenceText.text, '--frequency', frequencyText.text])
+        result = result.concat(['--rivers_number',riversText.text])
         return result
     }
-}
 
-//TODO: save config (JSON maybe?)
+    function saveSettings() {
+        var result = {
+            x: mainWindow.x,
+            y: mainWindow.y,
+            output: mapFileText.text,
+            algorithm: algorithmSelector.currentIndex,
+            seed: seedText.text,
+            height: initHeightText.text,
+            roughness: roughnessText.text,
+            islands: islandsText.text,
+            amplitude: amplitudeText.text,
+            persistence: persistenceText.text,
+            frequency: frequencyText.text,
+            rivers_number: riversText.text,
+        }
+        saveFile(mainWindow.settingsPath, JSON.stringify(result))
+    }
+
+    function loadSettings() {
+        try {
+            var result = JSON.parse(openFile(mainWindow.settingsPath))
+            mainWindow.setX(result.x)
+            mainWindow.setY(result.y)
+            mapFileText.text = result.output
+            algorithmSelector.currentIndex = result.algorithm
+            seedText.text = result.seed
+            initHeightText.text = result.height
+            roughnessText.text = result.roughness
+            islandsText.text = result.islands
+            amplitudeText.text = result.amplitude
+            persistenceText.text = result.persistence
+            frequencyText.text = result.frequency
+            riversText.text = result.rivers_number
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function openFile(fileUrl) {
+        return fileIO.openFile(fileUrl)
+    }
+
+    function saveFile(fileUrl, text) {
+        return fileIO.saveFile(fileUrl, text)
+    }
+
+    function redrawMap() {
+        //TODO: draw different size maps
+        var imageBase64 = drawMap.generateMapFromFile(mapFileText.text)
+        mapImage.source = "data:image/png;base64," + imageBase64
+    }
+
+}
