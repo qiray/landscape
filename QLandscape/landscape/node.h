@@ -6,8 +6,6 @@
 
 int log2int(int);
 
-const int bigSize = 8, logBigNode = 3, modBigNode = 7;
-
 class node {
     static const int weight = 10;
     unsigned short x, y; // coordinates

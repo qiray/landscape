@@ -22,7 +22,6 @@ inline int oneStepCell(int *field, int mapSize, int x, int y) {
 }
 
 void oneStep(int *field, float *heights, int mapSize) {
-    int length = mapSize*mapSize;
     for (int i = 0; i < mapSize; i++)
         for (int j = 0; j < mapSize; j++) {
             int tmp = oneStepCell(field, mapSize, i, j);
@@ -34,8 +33,8 @@ void CellularAutomaton(float *heights, int mapSize, int gens) {
     int length = mapSize*mapSize;
     int *field = new int [length];
     for (int i = 0; i < length; i++)
-        field[i] = round(minMaxRandom(0, 1));
-    memset(heights, 0, length*sizeof(*heights));
+        field[i] = static_cast<int>(roundf(minMaxRandom(0, 1)));
+    memset(heights, 0, static_cast<size_t>(length)*sizeof(*heights));
     for (int i = 0; i < gens; i++)
         oneStep(field, heights, mapSize);
     delete [] field;

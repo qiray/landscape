@@ -3,7 +3,7 @@
 node::node() {
     x = 0;
     y = 0;
-    parentNode = 0;
+    parentNode = nullptr;
     region = 0;
     regionInBigNode = 0;
 }
@@ -94,7 +94,7 @@ int node::parentStraightLength(float roughness) const {
         prevDiff = diff;
         len++;
     }
-    return len*weight*roughness;
+    return static_cast<int>(len*weight*roughness);
 }
 
 int log2int(int n) {

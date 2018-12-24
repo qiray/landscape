@@ -14,7 +14,7 @@ void binary_heap::push_back(node *n) {
     if (size == maxSize) {//resize array
         maxSize *= 2;
         node **list2 = new node* [maxSize];
-        memcpy(list2, list, size*sizeof(node*));
+        memcpy(list2, list, static_cast<size_t>(size)*sizeof(node*));
         delete [] list;
         list = list2;
         list[size++] = n;
@@ -24,7 +24,7 @@ void binary_heap::push_back(node *n) {
 }
 
 void binary_heap::pop_back() {////////////////////////
-    list[size--] = 0;
+    list[size--] = nullptr;
 }
 
 void binary_heap::add(node *n) {

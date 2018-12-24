@@ -12,17 +12,16 @@ class binary_heap {
     void push_back(node*);
     void pop_back();
 public:
-    int getSize() {return size;};
+    int getSize() {return size;}
     binary_heap();
     ~binary_heap();
-    int heapSize() {return size;};
+    int heapSize() {return size;}
     void add(node*);
     void heapify(int);
     void buildHeap();
     node* getMax();
     bool empty();
-    void clear() {size = 0;};
-    //friend ostream& operator<<(ostream&, const binary_heap&);
+    void clear() {size = 0;}
 };
 
 #endif

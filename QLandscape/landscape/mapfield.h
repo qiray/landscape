@@ -19,18 +19,18 @@ class mapField {
     node *allNodes;
     
 public:
-    unsigned short getSize() {return size;};
+    unsigned short getSize() {return size;}
     mapField(unsigned short);
     mapField(int, int*);
     ~mapField();
     friend ostream& operator<<(ostream&, const mapField&);
     bool saveMap(char*);
     bool loadMap(char*);
-    void addNode(unsigned short, unsigned short, int, const node&, const node&, float);
+    void addNode(int, int, int, const node&, const node&, float);
     void addAvailable(const node&, const node&, float);
     bool Astar(const node&, const node&, vector<int>&, float, unsigned short);
     void makeRegions();
-    void floodFill8Stack(unsigned short, unsigned short, int, int);
+    void floodFill8Stack(unsigned short, unsigned short, short, short);
     inline bool maxRadius(unsigned short, unsigned short, unsigned short, int&);
 };
 

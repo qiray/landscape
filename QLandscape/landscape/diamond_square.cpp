@@ -1,7 +1,7 @@
 #include "diamond_square.h"
 
 inline float squareStep(float *heights, int mapSize, float R, int leftX, int topY, int rightX, int bottomY) {
-    float l = sqrt((leftX - rightX)*(leftX - rightX) + (topY - bottomY)*(topY - bottomY));
+    float l = sqrtf((leftX - rightX)*(leftX - rightX) + (topY - bottomY)*(topY - bottomY));
     float result = (heights[leftX + mapSize*topY] + heights[rightX + mapSize*topY] + heights[leftX + mapSize*bottomY] + heights[rightX + mapSize*bottomY])/4 + minMaxRandom(-R*l, R*l);
     heights[(rightX + leftX)/2 + mapSize*(bottomY + topY)/2] = result;
     return result;

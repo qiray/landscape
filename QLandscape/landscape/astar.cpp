@@ -1,9 +1,9 @@
 #include "mapfield.h"
 #include <algorithm>
 
-extern stack coordStack;
+static stack coordStack;
 
-void mapField::floodFill8Stack(unsigned short x, unsigned short y, int newColor, int oldColor) {
+void mapField::floodFill8Stack(unsigned short x, unsigned short y, short newColor, short oldColor) {
    if(newColor == oldColor)
       return;
    coordStack.emptyStack();      
@@ -32,7 +32,7 @@ void mapField::floodFill8Stack(unsigned short x, unsigned short y, int newColor,
 }
 
 
-void mapField::addNode(unsigned short x, unsigned short y, int index, const node &current, const node &stop, float roughness) {
+void mapField::addNode(int x, int y, int index, const node &current, const node &stop, float roughness) {
    if (x >= size || y >= size)
       return;//don't handle nodes beyond the edge of map
    int i = x + y*size;
@@ -46,7 +46,7 @@ void mapField::addNode(unsigned short x, unsigned short y, int index, const node
       p->g = p->h = 0;
       p->H(stop);
       p->parentNode = const_cast<node*>(&current);
-      if (roughness > 0.001)
+      if (roughness > 0.001f)
          diff += p->parentStraightLength(roughness); //(hl + hr) / 2 + rand(-r * len, +r * len);
       p->G(diff);
       p->f = p->g + p->h;;
@@ -85,7 +85,7 @@ bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &w
    node *start, *stop;
    int startNum = startNode.x + startNode.y*size;
    int stopNum = stopNode.x + stopNode.y*size;
-   int limit = size*size;
+   size_t limit = size*size;
    unsigned short stopX = stopNode.x, stopY = stopNode.y;
    memset(info, '\0', limit*sizeof(char));
    start = &allNodes[startNum];
@@ -117,7 +117,8 @@ bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &w
 
 void mapField::makeRegions () {
    unsigned short x = 0, y = 0;
-   int i = 0, regionCode = 6, num = 0; 
+   int i = 0;
+   short regionCode = 6;
    coordStack.stackPointer = 0;
    coordStack.h = size;
    coordStack.stackSize = 8*size*size;//max size to avoid stack overflow

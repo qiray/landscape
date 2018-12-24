@@ -1,6 +1,6 @@
 #include "mapfield.h"
 
-stack coordStack;//stack struct (described below)
+//stack coordStack;//stack struct (described below)
 
 mapField::mapField(unsigned short Size) {
    if (Size == 0) 

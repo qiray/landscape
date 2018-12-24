@@ -14,8 +14,8 @@
 #include "rivers_generator.h"
 
 //TODO: refactoring
-//TODO: Qt GUI
 //TODO: license
+//TODO: version
 //TODO: readme
 
 using namespace std;
@@ -38,13 +38,13 @@ landscapeAlgorithm::landscapeAlgorithm(const string &type) {
     numberOfIslands = 1;
     islandSize = 3;
     randomSeed = 0;
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(nullptr)));
     startHeight = 5;
-    roughness = 0.1;
+    roughness = 0.1f;
     outHeight = -5;
-    persistence = 0.1;
-    frequency = 0.1;
-    amplitude = 0.1;
+    persistence = 0.1f;
+    frequency = 0.1f;
+    amplitude = 0.1f;
     hillNoise = 0;
     landscape = new landscapeCell[mapSize*mapSize];
 }
@@ -95,7 +95,7 @@ int landscapeAlgorithm::setIslandSize(int size) {
 }
 
 int landscapeAlgorithm::setRandomSeed(int seed) {
-    srand(seed == 0 ? time(NULL) : seed);
+    srand(static_cast<unsigned int>(seed == 0 ? time(nullptr) : seed));
     return randomSeed = seed;
 }
 
@@ -134,15 +134,15 @@ void landscapeAlgorithm::printLandscape() {
     if (fs.is_open()) {
         flag = 1;
         buf = fs.rdbuf();
-    } else
+    } else {
         cerr << "Failed to write into file " << outfileName << endl;
-    if (!flag)
         buf = std::cout.rdbuf();
+    }
     std::ostream out(buf);
     out << mapSize << endl;
     for (int i = 0; i < mapSize; i++) {
         for (int j = 0; j < mapSize; j++)
-            out << (int)landscape[j + i*mapSize] << " ";
+            out << static_cast<int>(landscape[j + i*mapSize]) << " ";
         out << endl;
     }
     if (flag)
@@ -166,10 +166,10 @@ void landscapeAlgorithm::generateLandscape() {
     float * heights = new float [heightsLength];
     int size = mapSize/((numberOfIslands & (numberOfIslands - 1)) == 0 ? numberOfIslands : nearestPower2(numberOfIslands));
     if (type == hill_algorithm) {
-        Hill_algorithm(heights, mapSize + 1, numberOfIslands, islandSize, roughness, mapSize, mapSize > 128 ? mapSize/5 : 50, MAX_LANDSCAPE_CELL*4);
+        Hill_algorithm(heights, mapSize + 1, numberOfIslands, roughness, mapSize, mapSize > 128 ? mapSize/5 : 50, MAX_LANDSCAPE_CELL*4);
         if (hillNoise) {
             float *heights2 = new float [heightsLength];
-            PerlinNoise(heights2, mapSize + 1, minMaxRandom(M_PI*2*10, M_PI*3*10), 1, 0.25, 60.0/mapSize, 0.1);
+            PerlinNoise(heights2, mapSize + 1, minMaxRandom(M_PI*2*10, M_PI*3*10), 1, 0.25, 60.0f/mapSize, 0.1f);
             for (int i = 0; i < heightsLength; i++)
                 heights[i] += heights2[i];
             delete [] heights2;
@@ -181,7 +181,9 @@ void landscapeAlgorithm::generateLandscape() {
     } else //default
         generateDiamondSquareHeights(heights, mapSize + 1, startHeight, roughness, size, outHeight, 0, 0, mapSize, mapSize);
     for (int i = 0; i < length; i++) {
-        int tmp = round((heights[i + i/mapSize] + heights[i + i/mapSize + 1] + heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4); //average value
+        int tmp = static_cast<int>(round((
+             heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
+             heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
         landscape[i] = tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp;
     }
     delete [] heights;
@@ -206,7 +208,7 @@ void generateWorld(landscapeAlgorithm &alg) {
 
 #define PARSE_FLOAT(desc, func) \
     if (strcmp(argv[i], desc) == 0) { \
-        func(atof(argv[++i])); \
+        func(static_cast<float>(atof(argv[++i]))); \
         continue; \
     }
 
