@@ -60,15 +60,15 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
     rivers.push_back(river);
 }
 
-int neighbourWater(landscapeCell *landscape, int mapSize, int index) {
+int neighbourWater(landscapeCell *landscape, int fullSize, int mapSize, int index) {
     int sum = 0;
-    if (landscape[index + 1] == 0)
+    if (index + 1 < fullSize && landscape[index + 1] == 0)
         sum++;
-    if (landscape[index - 1] == 0)
+    if (index - 1 >= 0 && landscape[index - 1] == 0)
         sum++;
-    if (landscape[index + mapSize] == 0)
+    if (index + mapSize < fullSize && landscape[index + mapSize] == 0)
         sum++;
-    if (landscape[index - mapSize] == 0)
+    if (index - mapSize >= 0 && landscape[index - mapSize] == 0)
         sum++;
     return sum;
 }
@@ -130,7 +130,7 @@ void generateRivers(landscapeAlgorithm &alg, int number, int length, int width) 
     for (int i = 0; i < rivers.size(); i++)
         for (int j = 0; j < rivers[i].size(); j++) {
             int index = rivers[i][j];
-            if (neighbourWater(landscape, mapSize, index) > 2) {
+            if (neighbourWater(landscape, len, mapSize, index) > 2) {
                 intersections.push_back(index);
                 widths.push_back(calcWidth(width, findRiverLength(rivers, index, i)));
             }

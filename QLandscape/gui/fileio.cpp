@@ -16,7 +16,7 @@ QString FileIO::openFile(QString inFileName) {
     }
 
     QFile file(inFileName);
-    if (not file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly)) {
         emit error(tr("Can't read from file") + " '" + inFileName + "'");
         return QString();
     }

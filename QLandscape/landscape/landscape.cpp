@@ -131,26 +131,23 @@ int landscapeAlgorithm::setHillNoise(int n) {
 
 void landscapeAlgorithm::printLandscape() {
     std::streambuf * buf;
+    cout << outfileName << endl;
     fstream fs(outfileName.c_str(), fstream::out);
     int flag = 0;
-    cout << "--\n";
     if (fs.is_open()) {
         flag = 1;
         buf = fs.rdbuf();
     } else {
-        cout << "!!!\n";
         cerr << "Failed to write into file " << outfileName << endl;
         buf = std::cout.rdbuf();
     }
     std::ostream out(buf);
     out << mapSize << endl;
-    cout << "0\n";
     for (int i = 0; i < mapSize; i++) {
         for (int j = 0; j < mapSize; j++)
             out << static_cast<int>(landscape[j + i*mapSize]) << " ";
         out << endl;
     }
-    cout << "1\n";
     if (flag)
         fs.close();
 }
@@ -190,14 +187,14 @@ void landscapeAlgorithm::generateLandscape() {
         int tmp = static_cast<int>(round((
              heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
              heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
-        landscape[i] = static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
+        landscape[i] = 5;//static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
     }
     delete [] heights;
 }
 
 void generateWorld(landscapeAlgorithm &alg) {
     alg.generateLandscape();
-    generateRivers(alg, rivers_number, river_length, river_width);
+//    generateRivers(alg, rivers_number, river_length, river_width); //TODO: uncomment when I fix it
 }
 
 #define PARSE_INT(desc, func) \

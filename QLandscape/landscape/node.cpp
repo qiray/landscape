@@ -4,14 +4,12 @@ node::node() {
     x = 0;
     y = 0;
     parentNode = nullptr;
-    region = 0;
 }
 
 node::node (unsigned short X, unsigned short Y, node* parent) {
     x = X;
     y = Y;
     parentNode = parent;
-    region = 0;
     if (parent)
         g = parent->g + weight;
     else

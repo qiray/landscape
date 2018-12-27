@@ -24,8 +24,7 @@ SOURCES += \
     rivers_generator.cpp \
     binary_heap.cpp \
     mapfield.cpp \
-    node.cpp \
-    stack.cpp
+    node.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -41,5 +40,4 @@ HEADERS += \
     rivers_generator.h \
     binary_heap.h \
     mapfield.h \
-    node.h \
-    stack.h
+    node.h

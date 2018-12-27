@@ -11,7 +11,6 @@ class node {
     unsigned short x, y; // coordinates
     int h, g, f;
     node* parentNode;
-    short region;
 public:
     friend class mapField;
     node();

@@ -44,11 +44,11 @@ ApplicationWindow {
         Menu {
             title: qsTr("File")
             MenuItem {
-                text: qsTr("Open")
+                text: qsTr("Open map")
                 onTriggered: fileDialog.open()
             }
             MenuItem {
-                text: qsTr("Close")
+                text: qsTr("Close app")
                 onTriggered: Qt.quit()
             }
         }
@@ -89,7 +89,6 @@ ApplicationWindow {
             onTextChanged: {
                 redrawMap()
             }
-            Component.onCompleted: this.text = "1.map" //run on load
         }
 
         Button {
@@ -289,16 +288,34 @@ ApplicationWindow {
             }
         }
 
+        Rectangle {
+            id: execpathRect
+            y: 220
+            x: 0
+            height: 30
+            width: parent.width
+            color: parent.color
+
+            LeftText {
+                anchors.topMargin: 5
+                text: qsTr("Path to generator")
+            }
+            RightTextField {
+                id: pathText
+                text: "../landscape/landscape"
+            }
+        }
+
         Button {
             anchors.top: parent.top
-            anchors.topMargin: 220
+            anchors.topMargin: 260
             anchors.left: parent.left
             anchors.leftMargin: 5
             width: parent.width - 10
             height: 30
             text: "Generate map"
             onClicked: {
-                exec.runBinary("../landscape/landscape", makeArguments());
+                exec.runBinary(pathText.text, makeArguments());
             }
         }
     }
@@ -314,6 +331,8 @@ ApplicationWindow {
         var result = ['--size', '512', '--noise', '--output', mapFileText.text, '--algorithm', cbItems.get(algorithmSelector.currentIndex).name]
         if (seedText.text != '') {
             result.push('--seed', seedText.text)
+        } else {
+            result.push('--seed', + new Date())
         }
         result = result.concat(['--height', initHeightText.text, '--roughness', roughnessText.text, '--islands', islandsText.text])
         result = result.concat(['--amplitude', amplitudeText.text, '--persistence', persistenceText.text, '--frequency', frequencyText.text])
@@ -335,6 +354,7 @@ ApplicationWindow {
             persistence: persistenceText.text,
             frequency: frequencyText.text,
             rivers_number: riversText.text,
+            generator_path: pathText.text,
         }
         saveFile(mainWindow.settingsPath, JSON.stringify(result))
     }
@@ -354,6 +374,7 @@ ApplicationWindow {
             persistenceText.text = result.persistence
             frequencyText.text = result.frequency
             riversText.text = result.rivers_number
+            pathText.text = result.generator_path
         } catch (e) {
             console.log(e);
         }
