@@ -1,5 +1,7 @@
 #include "binary_heap.h"
 
+//CLEAR
+
 binary_heap::binary_heap() {
     size = 0;
     maxSize = 8;
@@ -23,7 +25,7 @@ void binary_heap::push_back(node *n) {
     }
 }
 
-void binary_heap::pop_back() {////////////////////////
+void binary_heap::pop_back() {
     list[size--] = nullptr;
 }
 
@@ -31,7 +33,7 @@ void binary_heap::add(node *n) {
     push_back(n);
     int i = size - 1;
     int parent = (i - 1) >> 1;
-    while (i > 0 && list[parent]->f > list[i]->f) {
+    while (i > 0 && list[parent]->getF() > list[i]->getF()) {
         node *temp = list[i];
         list[i] = list[parent];
         list[parent] = temp;
@@ -48,10 +50,10 @@ void binary_heap::heapify(int i) {
         leftChild = (i << 1) + 1;
         rightChild = (i << 1) + 2;
         largestChild = i;
-        if (leftChild < size && list[leftChild]->f < list[largestChild]->f) {
+        if (leftChild < size && list[leftChild]->getF() < list[largestChild]->getF()) {
             largestChild = leftChild;
         }
-        if (rightChild < size && list[rightChild]->f < list[largestChild]->f) {
+        if (rightChild < size && list[rightChild]->getF() < list[largestChild]->getF()) {
             largestChild = rightChild;
         }
         if (largestChild == i) {

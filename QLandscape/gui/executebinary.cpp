@@ -11,6 +11,9 @@ int ExecuteBinary::runBinary(QString path, QStringList args) {
     QProcess process(this);
     process.start(path, args);
     process.waitForFinished();
+    qDebug() << process.exitCode();
+    qDebug() << process.readAllStandardOutput();
+    qDebug() << process.readAllStandardError();
     emit finish();
     return 0;
 }

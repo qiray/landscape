@@ -22,10 +22,10 @@ SOURCES += \
     landscape.cpp \
     perlin_noise.cpp \
     rivers_generator.cpp \
-    astar.cpp \
     binary_heap.cpp \
     mapfield.cpp \
     node.cpp \
+    stack.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -42,3 +42,4 @@ HEADERS += \
     binary_heap.h \
     mapfield.h \
     node.h \
+    stack.h

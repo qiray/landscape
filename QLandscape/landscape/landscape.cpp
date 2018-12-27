@@ -13,6 +13,7 @@
 #include "cellular_automata.h"
 #include "rivers_generator.h"
 
+//TODO: find if there are errors
 //TODO: refactoring
 //TODO: license
 //TODO: version
@@ -96,6 +97,7 @@ int landscapeAlgorithm::setIslandSize(int size) {
 
 int landscapeAlgorithm::setRandomSeed(int seed) {
     srand(static_cast<unsigned int>(seed == 0 ? time(nullptr) : seed));
+    cout << rand() << endl;
     return randomSeed = seed;
 }
 
@@ -131,20 +133,24 @@ void landscapeAlgorithm::printLandscape() {
     std::streambuf * buf;
     fstream fs(outfileName.c_str(), fstream::out);
     int flag = 0;
+    cout << "--\n";
     if (fs.is_open()) {
         flag = 1;
         buf = fs.rdbuf();
     } else {
+        cout << "!!!\n";
         cerr << "Failed to write into file " << outfileName << endl;
         buf = std::cout.rdbuf();
     }
     std::ostream out(buf);
     out << mapSize << endl;
+    cout << "0\n";
     for (int i = 0; i < mapSize; i++) {
         for (int j = 0; j < mapSize; j++)
             out << static_cast<int>(landscape[j + i*mapSize]) << " ";
         out << endl;
     }
+    cout << "1\n";
     if (flag)
         fs.close();
 }
@@ -169,13 +175,13 @@ void landscapeAlgorithm::generateLandscape() {
         Hill_algorithm(heights, mapSize + 1, numberOfIslands, roughness, mapSize, mapSize > 128 ? mapSize/5 : 50, MAX_LANDSCAPE_CELL*4);
         if (hillNoise) {
             float *heights2 = new float [heightsLength];
-            PerlinNoise(heights2, mapSize + 1, minMaxRandom(M_PI*2*10, M_PI*3*10), 1, 0.25, 60.0f/mapSize, 0.1f);
+            PerlinNoise(heights2, mapSize + 1, minMaxRandom(static_cast<float>(M_PI*2*10), static_cast<float>(M_PI*3*10)), 1, 0.25, 60.0f/mapSize, 0.1f);
             for (int i = 0; i < heightsLength; i++)
                 heights[i] += heights2[i];
             delete [] heights2;
         }
     } else if (type == perlin_noise) {
-        PerlinNoise(heights, mapSize + 1, minMaxRandom(M_PI*2*10, M_PI*3*10), 5, persistence, frequency, amplitude);
+        PerlinNoise(heights, mapSize + 1, minMaxRandom(static_cast<float>(M_PI*2*10), static_cast<float>(M_PI*3*10)), 5, persistence, frequency, amplitude);
     } else if (type == cellular_automata) {
         CellularAutomaton(heights, mapSize + 1, gens);
     } else //default
@@ -184,7 +190,7 @@ void landscapeAlgorithm::generateLandscape() {
         int tmp = static_cast<int>(round((
              heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
              heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
-        landscape[i] = tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp;
+        landscape[i] = static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
     }
     delete [] heights;
 }

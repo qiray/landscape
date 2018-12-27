@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include "binary_heap.h"
+#include "stack.h"
 
 #ifndef ASTAR_MAP_H
 
@@ -15,9 +16,9 @@ class mapField {
     unsigned short size, sizeMod, sizeLog;///size must be 2^n
     int* mapArray;
     char *info;//info about list (info = 1 if this node is in open list and = 2 if in close list)
-    binary_heap openList;
     node *allNodes;
-    
+    binary_heap openList;
+    Stack coordStack;
 public:
     unsigned short getSize() {return size;}
     mapField(unsigned short);
@@ -32,16 +33,6 @@ public:
     void makeRegions();
     void floodFill8Stack(unsigned short, unsigned short, short, short);
     inline bool maxRadius(unsigned short, unsigned short, unsigned short, int&);
-};
-
-struct stack {
-    int *stack;
-    int stackPointer, stackSize, h;
-    bool pop(unsigned short&, unsigned short&);
-    bool push(unsigned short, unsigned short); 
-    bool pop(int&);
-    bool push(int);
-    void emptyStack();
 };
 
 #endif

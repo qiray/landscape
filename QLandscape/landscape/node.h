@@ -11,10 +11,9 @@ class node {
     unsigned short x, y; // coordinates
     int h, g, f;
     node* parentNode;
-    short region, regionInBigNode;
+    short region;
 public:
     friend class mapField;
-    friend class binary_heap;
     node();
     node(unsigned short, unsigned short, node*);
     node* getParent() const;
@@ -28,8 +27,6 @@ public:
     int getF() const;
     int getG() const;
     int parentStraightLength(float) const;
-    friend bool operator==(const node&, const node&); 
-    friend bool operator!=(const node&, const node&); 
 };
 
 #endif

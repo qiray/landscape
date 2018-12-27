@@ -43,16 +43,16 @@ inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int
 inline float factorByLength(int mapSize, int start, int finish) {
     int len = abs(start%mapSize - finish%mapSize) + abs(start/mapSize - finish/mapSize);
     if (len <= 64)
-        return 0.5;
+        return 0.5f;
     if (len <= 128)
-        return 0.05;
-    return 0.02;
+        return 0.05f;
+    return 0.02f;
 }
 
 void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
     vector<int> river;
-    node startNode(start%mapSize, start/mapSize, 0);
-    node finishNode(finish%mapSize, finish/mapSize, 0);
+    node startNode(start%mapSize, start/mapSize, nullptr);
+    node finishNode(finish%mapSize, finish/mapSize, nullptr);
     m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
     int length = river.size() - 1;
     for (int i = 0; i <= length; i++) 

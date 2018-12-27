@@ -5,7 +5,6 @@ node::node() {
     y = 0;
     parentNode = nullptr;
     region = 0;
-    regionInBigNode = 0;
 }
 
 node::node (unsigned short X, unsigned short Y, node* parent) {
@@ -13,7 +12,6 @@ node::node (unsigned short X, unsigned short Y, node* parent) {
     y = Y;
     parentNode = parent;
     region = 0;
-    regionInBigNode = 0;
     if (parent)
         g = parent->g + weight;
     else
@@ -61,23 +59,12 @@ int node::F(node stop) {
     return f;
 }
 
-bool operator==(const node &n1, const node &n2) {
-    if (n1.x == n2.x && n2.y == n1.y)
-        return true;
-    else
-        return false;
-}
-
 int node::getF() const {
     return f;
 }
 
 int node::getG() const {
     return g;
-}
-
-bool operator!=(const node &n1, const node &n2) {
-    return !(n1 == n2);
 }
 
 int node::parentStraightLength(float roughness) const {
