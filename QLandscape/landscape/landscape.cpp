@@ -131,7 +131,6 @@ int landscapeAlgorithm::setHillNoise(int n) {
 
 void landscapeAlgorithm::printLandscape() {
     std::streambuf * buf;
-    cout << outfileName << endl;
     fstream fs(outfileName.c_str(), fstream::out);
     int flag = 0;
     if (fs.is_open()) {
@@ -194,7 +193,7 @@ void landscapeAlgorithm::generateLandscape() {
 
 void generateWorld(landscapeAlgorithm &alg) {
     alg.generateLandscape();
-    generateRivers(alg, rivers_number, river_length, river_width); //TODO: uncomment when I fix it
+    generateRivers(alg, rivers_number, river_length, river_width);
 }
 
 #define PARSE_INT(desc, func) \

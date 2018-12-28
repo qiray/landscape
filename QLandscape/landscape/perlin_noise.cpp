@@ -10,14 +10,14 @@ inline float Noise2D(int x, int y) {
 
 inline float Cosine_Interpolate(float a, float b, float x) {
     //return (1.0 - x)*a + x*b;
-    float ft = x*M_PI;
-    float f = (1 - cos(ft))*0.5;
+    float ft = static_cast<float>(M_PI)*x;
+    float f = (1 - cosf(ft))*0.5f;
     return a*(1 - f) + b*f;
 }
 
 inline float Fast_Interpolate(float a, float b, float x) {
-    float fac1 = 3*pow(1 - x, 2) - 2*pow(1 - x,3);
-    float fac2 = 3*pow(x, 2) - 2*pow(x, 3);
+    float fac1 = 3*powf(1 - x, 2) - 2*powf(1 - x,3);
+    float fac2 = 3*powf(x, 2) - 2*powf(x, 3);
     return a*fac1 + b*fac2;
 }
 
@@ -29,9 +29,9 @@ float SmoothedNoise2D(int x, int y) {
 }
 
 float CompileNoise(float x, float y) {
-    float int_X = int(x);
+    int int_X = int(x);
     float fractional_X = x - int_X;
-    float int_Y = int(y);
+    int int_Y = int(y);
     float fractional_Y = y - int_Y;
     
     float v1 = SmoothedNoise2D(int_X, int_Y);

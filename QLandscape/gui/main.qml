@@ -301,7 +301,7 @@ ApplicationWindow {
                 text: qsTr("Path to generator")
             }
             RightTextField {
-                id: pathText
+                id: pathText //TODO: add path or just move binary to the same folder
                 text: "../landscape/landscape"
             }
         }

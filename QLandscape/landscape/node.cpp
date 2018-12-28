@@ -50,6 +50,22 @@ int node::F(node stop) {
     return f;
 }
 
+void node::setF() {
+    f = g + h;
+}
+
+void node::initF(int value) {
+    f = value;
+}
+
+void node::clearG() {
+    g = 0;
+}
+
+void node::clearH() {
+    h = 0;
+}
+
 int node::getF() const {
     return f;
 }
@@ -73,6 +89,10 @@ int node::parentStraightLength(float roughness) const {
         len++;
     }
     return static_cast<int>(len*weight*roughness);
+}
+
+int node::getWeight() {
+    return node::weight;
 }
 
 int log2int(int n) {

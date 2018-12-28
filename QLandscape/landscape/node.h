@@ -12,7 +12,7 @@ class node {
     int h, g, f;
     node* parentNode;
 public:
-    friend class mapField;
+//    friend class mapField;
     node();
     node(unsigned short, unsigned short, node*);
     node* getParent() const;
@@ -22,9 +22,14 @@ public:
     int H(node);
     int G(int);
     int F(node);
+    void setF();
+    void initF(int);
+    void clearG();
+    void clearH();
     int getF() const;
     int getG() const;
     int parentStraightLength(float) const;
+    static int getWeight();
 };
 
 #endif

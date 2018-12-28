@@ -5,7 +5,9 @@
 #include <algorithm>
 #include "rivers_generator.h"
 
-vector<vector<int> > rivers;
+vector<vector<int>> rivers;
+
+//TODO: rewrite it
 
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
     if (x < 0 || y < 0 || x >= mapSize || y >= mapSize)
@@ -51,11 +53,11 @@ inline float factorByLength(int mapSize, int start, int finish) {
 
 void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
     vector<int> river;
-    node startNode(start%mapSize, start/mapSize, nullptr);
-    node finishNode(finish%mapSize, finish/mapSize, nullptr);
+    node startNode(static_cast<unsigned short>(start%mapSize), static_cast<unsigned short>(start/mapSize), nullptr);
+    node finishNode(static_cast<unsigned short>(finish%mapSize), static_cast<unsigned short>(finish/mapSize), nullptr);
     m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
-    int length = river.size() - 1;
-    for (int i = 0; i <= length; i++) 
+    size_t length = river.size() - 1;
+    for (size_t i = 0; i <= length; i++)
         landscape[river[i]] = 0;
     rivers.push_back(river);
 }
@@ -80,15 +82,15 @@ int calcWidth(int maxwidth, int length) {
 }
 
 inline int getVectorIndex (const vector<int>&array, int value) {
-    int len = array.size();
-    for (int i = 0; i < len; i++)
+    size_t len = array.size();
+    for (size_t i = 0; i < len; i++)
         if (array[i] == value)
             return i;
     return -1;
 }
 
 inline int findRiverLength(const vector<vector<int> >&rivers, int index, int notThisRiver) {
-    for (int i = 0; i < rivers.size(); i++)
+    for (size_t i = 0; i < rivers.size(); i++)
         if (i != notThisRiver && getVectorIndex (rivers[i], index) != -1)
             return rivers[i].size();
     return rivers[notThisRiver].size();
