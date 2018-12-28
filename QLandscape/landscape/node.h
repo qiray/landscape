@@ -20,7 +20,6 @@ public:
     unsigned short getY() const;
     void setParent(node*);
     int H(node);
-    int G();
     int G(int);
     int F(node);
     int getF() const;

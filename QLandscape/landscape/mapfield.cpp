@@ -75,18 +75,18 @@ void mapField::addNode(int x, int y, int index, const node &current, const node 
    if (x >= size || y >= size || x < 0 || y < 0)
       return;//don't handle nodes beyond the edge of map
    int i = x + y*size;
-   node *p = &allNodes[i];
    if (mapArray[i] == blockedCell || info[i] == 2) //if cell is blocked or in close list
       return;
-   int diff = (mapArray[i] - mapArray[index])*node::weight;
+   node *p = &allNodes[i];
+   int diff = (mapArray[i] - mapArray[index])*node::weight; //height difference influence
    if (diff > 0)
       diff *= 5;
    if (info[i] != 1) {//if not in open list
       p->g = p->h = 0;
       p->H(stop);
       p->parentNode = const_cast<node*>(&current);
-//      if (roughness > 0.001f)
-//         diff += p->parentStraightLength(roughness); //(hl + hr) / 2 + rand(-r * len, +r * len);
+      if (roughness > 0.001f)
+         diff += p->parentStraightLength(roughness);
       p->G(diff);
       p->f = p->g + p->h;;
       info[i] = 1;
@@ -134,10 +134,8 @@ bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &w
    openList.add(start);
    addAvailable(*start, *stop, roughness);
    info[startNum] = 2;
-   cout << start->x << " " << start->y << endl;
-   cout << stop->x << " " << stop->y << endl;
    while(!openList.isEmpty()) {
-      node *current(openList.getMax());
+      node *current(openList.getMin());
       info[current->x + current->y*size] = 2;
       addAvailable(*current, *stop, roughness);
       if (info[stopNum] == 1 || maxRadius(stopX, stopY, step, stopNum)) {//if stop node is in the open list

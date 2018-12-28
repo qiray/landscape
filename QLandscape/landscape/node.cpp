@@ -33,14 +33,7 @@ void node::setParent(node* n) {
     parentNode = n;
 }
 
-int node::G() {
-    if (g == 0)
-        return g = parentNode->g + weight;
-    else
-        return g;
-}
-
-int node::G(int value) {
+int node::G(int value = 0) {
     if (g == 0)
         return g = parentNode->g + weight + value;
     else

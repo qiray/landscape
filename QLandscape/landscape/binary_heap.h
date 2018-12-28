@@ -13,9 +13,10 @@ class binary_heap {
 public:
     binary_heap();
     void add(node*);
-    node* getMax();
+    node* getMin();
     bool isEmpty();
     void clear();
+    void print();
 };
 
 #endif

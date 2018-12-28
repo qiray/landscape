@@ -187,14 +187,14 @@ void landscapeAlgorithm::generateLandscape() {
         int tmp = static_cast<int>(round((
              heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
              heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
-        landscape[i] = 5;//static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
+        landscape[i] = static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
     }
     delete [] heights;
 }
 
 void generateWorld(landscapeAlgorithm &alg) {
     alg.generateLandscape();
-//    generateRivers(alg, rivers_number, river_length, river_width); //TODO: uncomment when I fix it
+    generateRivers(alg, rivers_number, river_length, river_width); //TODO: uncomment when I fix it
 }
 
 #define PARSE_INT(desc, func) \
