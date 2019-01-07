@@ -55,7 +55,8 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
     vector<int> river;
     node startNode(static_cast<unsigned short>(start%mapSize), static_cast<unsigned short>(start/mapSize), nullptr);
     node finishNode(static_cast<unsigned short>(finish%mapSize), static_cast<unsigned short>(finish/mapSize), nullptr);
-    m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0);
+    if (!m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0))
+        return;
     size_t length = river.size() - 1;
     for (size_t i = 0; i <= length; i++)
         landscape[river[i]] = 0;
