@@ -15,6 +15,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 QMAKE_CXXFLAGS += -O3
 
+CONFIG(debug, debug|release) {
+    TARGET_PATH = $$OUT_PWD/debug
+}
+CONFIG(release, debug|release) {
+    TARGET_PATH = $$OUT_PWD/release
+}
+#TODO: make config for Unix and release
+win32: CONFIG(debug, debug|release): QMAKE_POST_LINK += $$quote(copy $$shell_path($$TARGET_PATH/landscape.exe) $$shell_path($$OUT_PWD/../gui/debug/landscape.exe))
+
 SOURCES += \
     cellular_automata.cpp \
     diamond_square.cpp \

@@ -85,7 +85,7 @@ ApplicationWindow {
                 topMargin: 5
             }
             width: 200
-            text: ""
+            text: "1.map"
             onTextChanged: {
                 redrawMap()
             }
@@ -288,34 +288,16 @@ ApplicationWindow {
             }
         }
 
-        Rectangle {
-            id: execpathRect
-            y: 220
-            x: 0
-            height: 30
-            width: parent.width
-            color: parent.color
-
-            LeftText {
-                anchors.topMargin: 5
-                text: qsTr("Path to generator")
-            }
-            RightTextField {
-                id: pathText //TODO: add path or just move binary to the same folder
-                text: "../landscape/landscape"
-            }
-        }
-
         Button {
             anchors.top: parent.top
-            anchors.topMargin: 260
+            anchors.topMargin: 220
             anchors.left: parent.left
             anchors.leftMargin: 5
             width: parent.width - 10
             height: 30
             text: "Generate map"
             onClicked: {
-                exec.runBinary(pathText.text, makeArguments());
+                exec.runBinary('landscape', makeArguments());
             }
         }
     }
@@ -354,7 +336,6 @@ ApplicationWindow {
             persistence: persistenceText.text,
             frequency: frequencyText.text,
             rivers_number: riversText.text,
-            generator_path: pathText.text,
         }
         saveFile(mainWindow.settingsPath, JSON.stringify(result))
     }
@@ -374,7 +355,6 @@ ApplicationWindow {
             persistenceText.text = result.persistence
             frequencyText.text = result.frequency
             riversText.text = result.rivers_number
-            pathText.text = result.generator_path
         } catch (e) {
             console.log(e);
         }
