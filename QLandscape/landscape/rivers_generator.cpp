@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "rivers_generator.h"
 
-vector<vector<int>> rivers;
+static std::vector<std::vector<int>> rivers;
 
 //TODO: rewrite it
 
@@ -52,7 +52,7 @@ inline float factorByLength(int mapSize, int start, int finish) {
 }
 
 void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
-    vector<int> river;
+    std::vector<int> river;
     node startNode(static_cast<unsigned short>(start%mapSize), static_cast<unsigned short>(start/mapSize), nullptr);
     node finishNode(static_cast<unsigned short>(finish%mapSize), static_cast<unsigned short>(finish/mapSize), nullptr);
     if (!m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0))
@@ -82,7 +82,7 @@ int calcWidth(int maxwidth, int length) {
     return newWidth = newWidth <= 1 ? 1 : newWidth;
 }
 
-inline int getVectorIndex (const vector<int>&array, int value) {
+inline int getVectorIndex (const std::vector<int>&array, int value) {
     size_t len = array.size();
     for (size_t i = 0; i < len; i++)
         if (array[i] == value)
@@ -90,7 +90,7 @@ inline int getVectorIndex (const vector<int>&array, int value) {
     return -1;
 }
 
-inline int findRiverLength(const vector<vector<int> >&rivers, int index, int notThisRiver) {
+inline int findRiverLength(const std::vector<std::vector<int>> &rivers, int index, int notThisRiver) {
     for (size_t i = 0; i < rivers.size(); i++)
         if (i != notThisRiver && getVectorIndex (rivers[i], index) != -1)
             return rivers[i].size();
@@ -98,7 +98,7 @@ inline int findRiverLength(const vector<vector<int> >&rivers, int index, int not
 }
 
 void generateRivers(landscapeAlgorithm &alg, int number, int length, int width) {
-    vector<int> highlands;
+    std::vector<int> highlands;
     landscapeCell * landscape = alg.landscape;
     int mapSize = alg.mapSize;
     int len = mapSize*mapSize;
@@ -129,7 +129,7 @@ void generateRivers(landscapeAlgorithm &alg, int number, int length, int width) 
         generateRiverAstar(landscape, mapSize, m, start, finish);
         number--;
     }
-    vector<int> intersections, widths;
+    std::vector<int> intersections, widths;
     for (int i = 0; i < rivers.size(); i++)
         for (int j = 0; j < rivers[i].size(); j++) {
             int index = rivers[i][j];

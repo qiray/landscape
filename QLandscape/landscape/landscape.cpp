@@ -13,23 +13,20 @@
 #include "cellular_automata.h"
 #include "rivers_generator.h"
 
-//TODO: find if there are errors
 //TODO: refactoring
 //TODO: license
 //TODO: version
 //TODO: readme
 
-using namespace std;
-
 static int rivers_number = 10, river_length = 20, river_width = 2;
 static int gens = 20;
 
-const string landscapeAlgorithm::diamond_square = "diamond_square";
-const string landscapeAlgorithm::hill_algorithm = "hill_algorithm";
-const string landscapeAlgorithm::perlin_noise = "perlin_noise";
-const string landscapeAlgorithm::cellular_automata = "cellular_automata";
+const std::string landscapeAlgorithm::diamond_square = "diamond_square";
+const std::string landscapeAlgorithm::hill_algorithm = "hill_algorithm";
+const std::string landscapeAlgorithm::perlin_noise = "perlin_noise";
+const std::string landscapeAlgorithm::cellular_automata = "cellular_automata";
 
-landscapeAlgorithm::landscapeAlgorithm(const string &type) {
+landscapeAlgorithm::landscapeAlgorithm(const std::string &type) {
     if (checkAlgorithm(type))
         this->type = diamond_square;
     else
@@ -54,18 +51,18 @@ landscapeAlgorithm::~landscapeAlgorithm() {
     delete [] landscape;
 }
 
-int landscapeAlgorithm::checkAlgorithm(const string&type) {
+int landscapeAlgorithm::checkAlgorithm(const std::string&type) {
     if (type != diamond_square && type != hill_algorithm && type != perlin_noise && type != cellular_automata)
         return 1;
     else
         return 0;
 }
 
-string landscapeAlgorithm::setOutFileName(const string &name) {
+std::string landscapeAlgorithm::setOutFileName(const std::string &name) {
     return outfileName = name;
 }
 
-int landscapeAlgorithm::setType(const string &type) {
+int landscapeAlgorithm::setType(const std::string &type) {
     if (checkAlgorithm(type)) {
         this->type = diamond_square;
         return 1;
@@ -77,7 +74,7 @@ int landscapeAlgorithm::setType(const string &type) {
 
 int landscapeAlgorithm::setMapSize(int size) {
     if (size <= 0)
-        size =256;
+        size = 256;
     delete [] landscape;
     landscape = new landscapeCell[size*size];
     return mapSize = size;
@@ -97,7 +94,6 @@ int landscapeAlgorithm::setIslandSize(int size) {
 
 int landscapeAlgorithm::setRandomSeed(int seed) {
     srand(static_cast<unsigned int>(seed == 0 ? time(nullptr) : seed));
-    cout << rand() << endl;
     return randomSeed = seed;
 }
 
@@ -131,21 +127,21 @@ int landscapeAlgorithm::setHillNoise(int n) {
 
 void landscapeAlgorithm::printLandscape() {
     std::streambuf * buf;
-    fstream fs(outfileName.c_str(), fstream::out);
+    std::fstream fs(outfileName.c_str(), std::fstream::out);
     int flag = 0;
     if (fs.is_open()) {
         flag = 1;
         buf = fs.rdbuf();
     } else {
-        cerr << "Failed to write into file " << outfileName << endl;
+        std::cerr << "Failed to write into file " << outfileName << std::endl;
         buf = std::cout.rdbuf();
     }
     std::ostream out(buf);
-    out << mapSize << endl;
+    out << mapSize << std::endl;
     for (int i = 0; i < mapSize; i++) {
         for (int j = 0; j < mapSize; j++)
             out << static_cast<int>(landscape[j + i*mapSize]) << " ";
-        out << endl;
+        out << std::endl;
     }
     if (flag)
         fs.close();
@@ -183,7 +179,7 @@ void landscapeAlgorithm::generateLandscape() {
     } else //default
         generateDiamondSquareHeights(heights, mapSize + 1, startHeight, roughness, size, outHeight, 0, 0, mapSize, mapSize);
     for (int i = 0; i < length; i++) {
-        int tmp = static_cast<int>(round((
+        int tmp = static_cast<int>(roundf((
              heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
              heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
         landscape[i] = static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);

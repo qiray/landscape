@@ -1,8 +1,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 #ifndef LANDSCAPE_H
 
 #define LANDSCAPE_H
@@ -10,27 +8,25 @@ using namespace std;
 typedef char landscapeCell;
 #define MAX_LANDSCAPE_CELL 127
 
-extern vector<vector<int> > rivers; //TODO: move to class
-
 class landscapeAlgorithm {
-    static const string diamond_square;
-    static const string hill_algorithm;
-    static const string perlin_noise;
-    static const string cellular_automata;
+    static const std::string diamond_square;
+    static const std::string hill_algorithm;
+    static const std::string perlin_noise;
+    static const std::string cellular_automata;
     
-    string type;
+    std::string type;
     landscapeCell *landscape;
-    string outfileName;
+    std::string outfileName;
     int mapSize, numberOfIslands, islandSize;
     int randomSeed, startHeight;
     float roughness, outHeight;
     float persistence, frequency, amplitude;
     int hillNoise;
-    int checkAlgorithm(const string&);
+    int checkAlgorithm(const std::string&);
 public:
-    landscapeAlgorithm(const string&);
-    int setType(const string&);
-    string setOutFileName(const string&);
+    landscapeAlgorithm(const std::string&);
+    int setType(const std::string&);
+    std::string setOutFileName(const std::string&);
     int setMapSize(int);
     int setNumberOfIslands(int);
     int setIslandSize(int);

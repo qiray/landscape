@@ -10,6 +10,8 @@ import FileIO 1.0
 import DrawMap 1.0
 import ExecuteBinary 1.0
 
+//TODO: icon
+
 ApplicationWindow {
     property int windowWidth: 800
     property int windowHeight: 600

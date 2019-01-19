@@ -16,13 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 QMAKE_CXXFLAGS += -O3
 
 CONFIG(debug, debug|release) {
-    TARGET_PATH = $$OUT_PWD/debug
+    BUILD = debug
 }
 CONFIG(release, debug|release) {
-    TARGET_PATH = $$OUT_PWD/release
+    BUILD = release
 }
-#TODO: make config for Unix and release
-win32: CONFIG(debug, debug|release): QMAKE_POST_LINK += $$quote(copy $$shell_path($$TARGET_PATH/landscape.exe) $$shell_path($$OUT_PWD/../gui/debug/landscape.exe))
+#TODO: test for release
+win32: QMAKE_POST_LINK += $$quote(copy $$shell_path($$OUT_PWD/$$BUILD/landscape.exe) $$shell_path($$OUT_PWD/../gui/$$BUILD/landscape.exe))
+unix: QMAKE_POST_LINK += $$quote(cp $$shell_path($$OUT_PWD/landscape) $$shell_path($$OUT_PWD/../gui/landscape))
 
 SOURCES += \
     cellular_automata.cpp \

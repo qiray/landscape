@@ -27,28 +27,28 @@ mapField::~mapField() {
     delete [] allNodes;
 }
 
-ostream& operator<< (ostream& s, const mapField& m) {
+std::ostream& operator<< (std::ostream& s, const mapField& m) {
    int* p = m.mapArray;
    for(int i = 0; i < m.size; i++) {
       for(int j = 0; j < m.size; j++)
          s << p[j + i*m.size]<< " ";
-      s << endl;
+      s << std::endl;
    }
    return s;
 }
 
 bool mapField::saveMap(char* fileName) { //save map to file fileName, return true if successful
-   fstream f(fileName, fstream::out);
+   std::fstream f(fileName, std::fstream::out);
    if (f.fail())
       return false;
-   f << size << endl;
-   f << *this << endl;
+   f << size << std::endl;
+   f << *this << std::endl;
    f.close();
    return true;
 }
 
 bool mapField::loadMap(char* fileName) { //load map from file fileName, return true if successful
-   fstream f(fileName, fstream::in);
+   std::fstream f(fileName, std::fstream::in);
    if (f.fail())
       return false;
    f >> size;
@@ -120,7 +120,7 @@ inline bool mapField::maxRadius(unsigned short stopX, unsigned short stopY, unsi
    return false;
 }
 
-bool mapField::Astar(const node &startNode, const node &stopNode, vector<int> &way, float roughness, unsigned short step = 0) {//return true if path is found
+bool mapField::Astar(const node &startNode, const node &stopNode, std::vector<int> &way, float roughness, unsigned short step = 0) {//return true if path is found
    //step is max distance between stopNode and node where search stops, if zero then stop only if stop node is reached
    node *start, *stop;
    int startNum = startNode.getX() + startNode.getY()*size;

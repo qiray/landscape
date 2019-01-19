@@ -9,8 +9,6 @@
 
 const int blockedCell = -1;
 
-using namespace std;
-
 class mapField {
     unsigned short size, sizeMod, sizeLog;//size must be 2^n
     int* mapArray;
@@ -21,12 +19,12 @@ public:
     unsigned short getSize() {return size;}
     mapField(int, int*);
     ~mapField();
-    friend ostream& operator<<(ostream&, const mapField&);
+    friend std::ostream& operator<<(std::ostream&, const mapField&);
     bool saveMap(char*);
     bool loadMap(char*);
     void addNode(int, int, int, const node&, const node&, float);
     void addAvailable(const node&, const node&, float);
-    bool Astar(const node&, const node&, vector<int>&, float, unsigned short);
+    bool Astar(const node&, const node&, std::vector<int>&, float, unsigned short);
     inline bool maxRadius(unsigned short, unsigned short, unsigned short, int&);
 };
 
