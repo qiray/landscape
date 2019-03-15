@@ -24,9 +24,9 @@ void ExecuteBinary::processFinished(int exitCode, QProcess::ExitStatus exitStatu
 
 int ExecuteBinary::runBinary(QString path, QStringList args) {
     qDebug() << path << " " << args;
-    process = new QProcess(this);
+    process = new QProcess(this); //TODO: delete processes after finish or prevent from their creation
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [=](int exitCode, QProcess::ExitStatus exitStatus) { processFinished(exitCode, exitStatus); });
-    process->start(path, args);
+    process->start("./" + path, args);
     return 0;
 }
