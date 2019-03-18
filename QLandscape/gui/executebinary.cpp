@@ -1,5 +1,6 @@
 #include <QProcess>
 #include <QDebug>
+#include <QCoreApplication>
 #include "executebinary.h"
 
 ExecuteBinary::ExecuteBinary(QObject *parent) : QObject(parent) {
@@ -19,14 +20,18 @@ void ExecuteBinary::processFinished(int exitCode, QProcess::ExitStatus exitStatu
     auto standardError = process->readAllStandardError();
     if (!standardError.isEmpty())
         emit error(standardError);
+    delete process;
+    process = nullptr;
     emit finish();
 }
 
 int ExecuteBinary::runBinary(QString path, QStringList args) {
+    if (process)
+        return 1;
     qDebug() << path << " " << args;
-    process = new QProcess(this); //TODO: delete processes after finish or prevent from their creation
+    process = new QProcess(this);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [=](int exitCode, QProcess::ExitStatus exitStatus) { processFinished(exitCode, exitStatus); });
-    process->start("./" + path, args);
+    process->start(QCoreApplication::applicationDirPath() + "/" + path, args);
     return 0;
 }

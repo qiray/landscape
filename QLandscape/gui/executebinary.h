@@ -2,7 +2,6 @@
 #define EXECUTEBINARY_H
 
 #include <QObject>
-#include <QPointer>
 #include <QProcess>
 
 class ExecuteBinary : public QObject
@@ -20,7 +19,7 @@ signals:
     void error(const QString& msg);
     void finish();
 private:
-    QPointer<QProcess> process; //Use smart pointer not to delete it manually
+    QProcess* process;
 };
 
 #endif // EXECUTEBINARY_H
