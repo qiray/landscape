@@ -14,7 +14,6 @@
 #include "rivers_generator.h"
 
 //TODO: refactoring
-//TODO: license
 //TODO: version
 //TODO: readme
 
