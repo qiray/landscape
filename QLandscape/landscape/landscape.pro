@@ -21,7 +21,7 @@ CONFIG(debug, debug|release) {
 CONFIG(release, debug|release) {
     BUILD = release
 }
-#TODO: test for release
+#TODO: make normal release
 win32: QMAKE_POST_LINK += $$quote(copy $$shell_path($$OUT_PWD/$$BUILD/landscape.exe) $$shell_path($$OUT_PWD/../gui/$$BUILD/landscape.exe))
 unix: QMAKE_POST_LINK += $$quote(cp $$shell_path($$OUT_PWD/landscape) $$shell_path($$OUT_PWD/../gui/landscape))
 

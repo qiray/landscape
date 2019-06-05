@@ -14,28 +14,28 @@
 #include "rivers_generator.h"
 
 //TODO: refactoring
-//TODO: version
 //TODO: readme
 
 static int rivers_number = 10, river_length = 20, river_width = 2;
-static int gens = 20;
 
-const std::string landscapeAlgorithm::diamond_square = "diamond_square";
-const std::string landscapeAlgorithm::hill_algorithm = "hill_algorithm";
-const std::string landscapeAlgorithm::perlin_noise = "perlin_noise";
-const std::string landscapeAlgorithm::cellular_automata = "cellular_automata";
+void setRiversCount(int count) {
+    rivers_number = count;
+}
 
-landscapeAlgorithm::landscapeAlgorithm(const std::string &type) {
-    if (checkAlgorithm(type))
-        this->type = diamond_square;
-    else
-        this->type = type;
-    outfileName = "";
-    mapSize = 256; //default values
+const std::string LandscapeAlgorithm::diamond_square = "diamond_square";
+const std::string LandscapeAlgorithm::hill_algorithm = "hill_algorithm";
+const std::string LandscapeAlgorithm::perlin_noise = "perlin_noise";
+const std::string LandscapeAlgorithm::cellular_automata = "cellular_automata";
+
+LandscapeAlgorithm::LandscapeAlgorithm() {
+    srand(static_cast<unsigned int>(time(nullptr)));
+    //default values
+    type = diamond_square;
+    outfileName = "1.map";
+    mapSize = 512;
     numberOfIslands = 1;
     islandSize = 3;
     randomSeed = 0;
-    srand(static_cast<unsigned int>(time(nullptr)));
     startHeight = 5;
     roughness = 0.1f;
     outHeight = -5;
@@ -43,88 +43,86 @@ landscapeAlgorithm::landscapeAlgorithm(const std::string &type) {
     frequency = 0.1f;
     amplitude = 0.1f;
     hillNoise = 0;
+    generations = 20;
     landscape = new landscapeCell[mapSize*mapSize];
 }
 
-landscapeAlgorithm::~landscapeAlgorithm() {
+LandscapeAlgorithm::~LandscapeAlgorithm() {
     delete [] landscape;
 }
 
-int landscapeAlgorithm::checkAlgorithm(const std::string&type) {
+int LandscapeAlgorithm::isValidType(const std::string&type) {
     if (type != diamond_square && type != hill_algorithm && type != perlin_noise && type != cellular_automata)
         return 1;
     else
         return 0;
 }
 
-std::string landscapeAlgorithm::setOutFileName(const std::string &name) {
+std::string LandscapeAlgorithm::setOutFileName(const std::string &name) {
     return outfileName = name;
 }
 
-int landscapeAlgorithm::setType(const std::string &type) {
-    if (checkAlgorithm(type)) {
-        this->type = diamond_square;
+int LandscapeAlgorithm::setType(const std::string &type) {
+    if (!isValidType(type))
         return 1;
-    } else {
-        this->type = type;
-        return 0;
-    }
+    this->type = type;
+    return 0;
 }
 
-int landscapeAlgorithm::setMapSize(int size) {
+int LandscapeAlgorithm::setMapSize(int size) {
     if (size <= 0)
-        size = 256;
+        size = 512;
     delete [] landscape;
     landscape = new landscapeCell[size*size];
     return mapSize = size;
 }
 
-int landscapeAlgorithm::setNumberOfIslands(int number) {
+int LandscapeAlgorithm::setNumberOfIslands(int number) {
     if (number <= 0)
         return numberOfIslands = 0;
     return numberOfIslands = number;
 }
 
-int landscapeAlgorithm::setIslandSize(int size) {
+int LandscapeAlgorithm::setIslandSize(int size) {
     if (size <= 0)
         return 0;
     return islandSize = size;
 }
 
-int landscapeAlgorithm::setRandomSeed(int seed) {
+int LandscapeAlgorithm::setRandomSeed(int seed) {
     srand(static_cast<unsigned int>(seed == 0 ? time(nullptr) : seed));
     return randomSeed = seed;
 }
 
-int landscapeAlgorithm::setStartHeight(int height) {
+int LandscapeAlgorithm::setStartHeight(int height) {
     return startHeight = height;
 }
 
-float landscapeAlgorithm::setRoughness(float r) {
+float LandscapeAlgorithm::setRoughness(float r) {
     return roughness = r;
 }
 
-float landscapeAlgorithm::setOutHeight(float h) {
+float LandscapeAlgorithm::setOutHeight(float h) {
     return outHeight = h;
 }
 
-float landscapeAlgorithm::setAmplitude(float a) {
+float LandscapeAlgorithm::setAmplitude(float a) {
     return amplitude = a;
 }
 
-float landscapeAlgorithm::setPersistence(float p) {
+float LandscapeAlgorithm::setPersistence(float p) {
     return persistence = p;
 }
 
-float landscapeAlgorithm::setFrequency(float f) {
+float LandscapeAlgorithm::setFrequency(float f) {
     return frequency = f;
 }
 
-int landscapeAlgorithm::setHillNoise(int n) {
+int LandscapeAlgorithm::setHillNoise(int n) {
     return hillNoise = n;
 }
 
-void landscapeAlgorithm::printLandscape() {
+void LandscapeAlgorithm::printLandscape() {
     std::streambuf * buf;
     std::fstream fs(outfileName.c_str(), std::fstream::out);
     int flag = 0;
@@ -157,7 +155,7 @@ inline int nearestPower2(int n) {
     return i;
 }
 
-void landscapeAlgorithm::generateLandscape() {
+void LandscapeAlgorithm::generateLandscape() {
     int length = mapSize*mapSize;
     int heightsLength = (mapSize + 1)*(mapSize + 1);
     float * heights = new float [heightsLength];
@@ -174,7 +172,7 @@ void landscapeAlgorithm::generateLandscape() {
     } else if (type == perlin_noise) {
         PerlinNoise(heights, mapSize + 1, minMaxRandom(static_cast<float>(M_PI*2*10), static_cast<float>(M_PI*3*10)), 5, persistence, frequency, amplitude);
     } else if (type == cellular_automata) {
-        CellularAutomaton(heights, mapSize + 1, gens);
+        CellularAutomaton(heights, mapSize + 1, generations);
     } else //default
         generateDiamondSquareHeights(heights, mapSize + 1, startHeight, roughness, size, outHeight, 0, 0, mapSize, mapSize);
     for (int i = 0; i < length; i++) {
@@ -184,22 +182,16 @@ void landscapeAlgorithm::generateLandscape() {
         landscape[i] = static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
     }
     delete [] heights;
+    generateRivers(rivers_number, river_length, river_width);
 }
 
-void generateWorld(landscapeAlgorithm &alg) {
-    alg.generateLandscape();
-    generateRivers(alg, rivers_number, river_length, river_width);
+void LandscapeAlgorithm::setGenerations(int generations) {
+    this->generations = generations;
 }
 
 #define PARSE_INT(desc, func) \
     if (strcmp(argv[i], desc) == 0) { \
         func(atoi(argv[++i])); \
-        continue; \
-    }
-
-#define PARSE_INT_VAL(desc, val) \
-    if (strcmp(argv[i], desc) == 0) { \
-        val = atoi(argv[++i]); \
         continue; \
     }
 
@@ -216,7 +208,7 @@ void generateWorld(landscapeAlgorithm &alg) {
     }
 
 int main(int argc, char **argv) {
-    landscapeAlgorithm alg("");
+    LandscapeAlgorithm alg;
     for (int i = 0; i < argc; i++) {
         PARSE_STRING("--algorithm", alg.setType);
         PARSE_STRING("--output", alg.setOutFileName);
@@ -225,19 +217,19 @@ int main(int argc, char **argv) {
         PARSE_INT("--islandSize", alg.setIslandSize);
         PARSE_INT("--seed", alg.setRandomSeed);
         PARSE_INT("--height", alg.setStartHeight);
+        PARSE_INT("--gens", alg.setGenerations);
+        PARSE_INT("--rivers_number", setRiversCount);
         PARSE_FLOAT("--roughness", alg.setRoughness);
         PARSE_FLOAT("--out_height", alg.setOutHeight);
         PARSE_FLOAT("--amplitude", alg.setAmplitude);
         PARSE_FLOAT("--persistence", alg.setPersistence);
         PARSE_FLOAT("--frequency", alg.setFrequency);
-        PARSE_INT_VAL("--rivers_number", rivers_number);
-        PARSE_INT_VAL("--gens", gens);
         if (strcmp(argv[i], "--noise") == 0) {
             alg.setHillNoise(1);
             continue;
         }
     }
-    generateWorld(alg);
+    alg.generateLandscape();
     alg.printLandscape();
     return 0;
 }

@@ -10,6 +10,7 @@ static std::vector<std::vector<int>> rivers;
 //TODO: rewrite it
 
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
+    //return true if landscape[x][y] is water and set finish point for river
     if (x < 0 || y < 0 || x >= mapSize || y >= mapSize)
         return false;
     if((landscape[y*mapSize + x] <= -1 || landscape[y*mapSize + x] == 0) && rand()%101 > 90) {
@@ -28,6 +29,7 @@ inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &f
 }
 
 inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {
+    //get distance to nearest water point or -1 if fail
     int dist = 1, x = start%mapSize, y = start/mapSize;
     while(1) {
         for (int i = x - dist; i <= x + dist; i++)
@@ -42,7 +44,7 @@ inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int
     }
 }
 
-inline float factorByLength(int mapSize, int start, int finish) {
+inline float roughnessByLength(int mapSize, int start, int finish) {
     int len = abs(start%mapSize - finish%mapSize) + abs(start/mapSize - finish/mapSize);
     if (len <= 64)
         return 0.5f;
@@ -55,7 +57,7 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
     std::vector<int> river;
     node startNode(static_cast<unsigned short>(start%mapSize), static_cast<unsigned short>(start/mapSize), nullptr);
     node finishNode(static_cast<unsigned short>(finish%mapSize), static_cast<unsigned short>(finish/mapSize), nullptr);
-    if (!m.Astar(startNode, finishNode, river, factorByLength(mapSize, start, finish), 0))
+    if (!m.Astar(startNode, finishNode, river, roughnessByLength(mapSize, start, finish), 0))
         return;
     size_t length = river.size() - 1;
     for (size_t i = 0; i <= length; i++)
@@ -79,10 +81,10 @@ int neighbourWater(landscapeCell *landscape, int fullSize, int mapSize, int inde
 int calcWidth(int maxwidth, int length) {
     int newWidth = length/50;
     newWidth = newWidth > maxwidth ? maxwidth : newWidth;
-    return newWidth = newWidth <= 1 ? 1 : newWidth;
+    return newWidth <= 1 ? 1 : newWidth;
 }
 
-inline int getVectorIndex (const std::vector<int>&array, int value) {
+inline int getVectorIndex (const std::vector<int>&array, int value) { //TODO: replace with std::find or something similar
     size_t len = array.size();
     for (size_t i = 0; i < len; i++)
         if (array[i] == value)
@@ -97,10 +99,8 @@ inline int findRiverLength(const std::vector<std::vector<int>> &rivers, int inde
     return rivers[notThisRiver].size();
 }
 
-void generateRivers(landscapeAlgorithm &alg, int number, int length, int width) {
+void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
     std::vector<int> highlands;
-    landscapeCell * landscape = alg.landscape;
-    int mapSize = alg.mapSize;
     int len = mapSize*mapSize;
     int *tempMap = new int [len];
     double average = 0.0, factor = 0.3;

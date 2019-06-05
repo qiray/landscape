@@ -8,7 +8,11 @@
 typedef char landscapeCell;
 #define MAX_LANDSCAPE_CELL 127
 
-class landscapeAlgorithm {
+#define MAJOR_VERSION 0 //TODO: use version
+#define MINOR_VERSION 0
+#define BUILD_VERSION 1
+
+class LandscapeAlgorithm {
     static const std::string diamond_square;
     static const std::string hill_algorithm;
     static const std::string perlin_noise;
@@ -22,27 +26,28 @@ class landscapeAlgorithm {
     float roughness, outHeight;
     float persistence, frequency, amplitude;
     int hillNoise;
-    int checkAlgorithm(const std::string&);
+    int generations;
+    int isValidType(const std::string&);
 public:
-    landscapeAlgorithm(const std::string&);
-    int setType(const std::string&);
+    LandscapeAlgorithm();
+    ~LandscapeAlgorithm();
     std::string setOutFileName(const std::string&);
+    int setType(const std::string&);
     int setMapSize(int);
     int setNumberOfIslands(int);
     int setIslandSize(int);
     int setRandomSeed(int);
     int setStartHeight(int);
+    int setHillNoise(int);
     float setRoughness(float);
     float setOutHeight(float);
     float setAmplitude(float);
     float setPersistence(float);
     float setFrequency(float);
-    int setHillNoise(int);
     void printLandscape();
     void generateLandscape();
-    ~landscapeAlgorithm();
-    
-    friend void generateRivers(landscapeAlgorithm&, int, int, int);
+    void setGenerations(int generations);
+    void generateRivers(int, int, int);
 };
 
 #endif

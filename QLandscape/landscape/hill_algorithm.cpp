@@ -9,7 +9,7 @@ void initHeights(float *heights, int mapSize) {
 }
 
 inline void setHillHeigths(float *heights, int mapSize, float maxHeight, int x, int y, int xorigin, int yorigin) {
-    if (x >= 0 && y >= 0 && x < mapSize && y < mapSize) { //TODO: maybe make hills with different heights
+    if (x >= 0 && y >= 0 && x < mapSize && y < mapSize) {
         int xdiff = x - xorigin, ydiff = y - yorigin, dist = xdiff*xdiff + ydiff*ydiff;
         float result = maxHeight - dist;
         if (result > 0)

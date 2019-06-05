@@ -4,6 +4,7 @@
 #include "cellular_automata.h"
 
 //TODO: make it work
+//read - http://ideabyre.com/world-building/erosion/erosion_model
 
 inline int oneStepCell(int *field, int mapSize, int x, int y) {
     int sum = 0;
