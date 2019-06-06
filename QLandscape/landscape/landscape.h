@@ -27,7 +27,8 @@ class LandscapeAlgorithm {
     float persistence, frequency, amplitude;
     int hillNoise;
     int generations;
-    int isValidType(const std::string&);
+    int rivers_number, river_length, river_width;
+    bool isValidType(const std::string&);
 public:
     LandscapeAlgorithm();
     ~LandscapeAlgorithm();
@@ -47,6 +48,7 @@ public:
     void printLandscape();
     void generateLandscape();
     void setGenerations(int generations);
+    void setRiversCount(int count);
     void generateRivers(int, int, int);
 };
 

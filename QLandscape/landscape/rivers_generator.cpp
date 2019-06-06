@@ -7,7 +7,7 @@
 
 static std::vector<std::vector<int>> rivers;
 
-//TODO: rewrite it
+//TODO: rewrite it. Make class?
 
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
     //return true if landscape[x][y] is water and set finish point for river
@@ -84,12 +84,11 @@ int calcWidth(int maxwidth, int length) {
     return newWidth <= 1 ? 1 : newWidth;
 }
 
-inline int getVectorIndex (const std::vector<int>&array, int value) { //TODO: replace with std::find or something similar
-    size_t len = array.size();
-    for (size_t i = 0; i < len; i++)
-        if (array[i] == value)
-            return i;
-    return -1;
+inline int getVectorIndex (const std::vector<int>&array, int value) {
+    auto it = std::find(array.begin(), array.end(), value);
+    if (it == array.end())
+        return -1;
+    return static_cast<int>(std::distance(array.begin(), it));
 }
 
 inline int findRiverLength(const std::vector<std::vector<int>> &rivers, int index, int notThisRiver) {

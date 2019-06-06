@@ -1,26 +1,12 @@
+
 #include <iostream>
 #include <fstream>
-#include <cstring>
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <cmath>
-#include <time.h>
 #include "landscape.h"
 #include "diamond_square.h"
 #include "hill_algorithm.h"
 #include "perlin_noise.h"
 #include "cellular_automata.h"
 #include "rivers_generator.h"
-
-//TODO: refactoring
-//TODO: readme
-
-static int rivers_number = 10, river_length = 20, river_width = 2;
-
-void setRiversCount(int count) {
-    rivers_number = count;
-}
 
 const std::string LandscapeAlgorithm::diamond_square = "diamond_square";
 const std::string LandscapeAlgorithm::hill_algorithm = "hill_algorithm";
@@ -44,6 +30,9 @@ LandscapeAlgorithm::LandscapeAlgorithm() {
     amplitude = 0.1f;
     hillNoise = 0;
     generations = 20;
+    rivers_number = 10;
+    river_length = 20;
+    river_width = 2;
     landscape = new landscapeCell[mapSize*mapSize];
 }
 
@@ -51,11 +40,8 @@ LandscapeAlgorithm::~LandscapeAlgorithm() {
     delete [] landscape;
 }
 
-int LandscapeAlgorithm::isValidType(const std::string&type) {
-    if (type != diamond_square && type != hill_algorithm && type != perlin_noise && type != cellular_automata)
-        return 1;
-    else
-        return 0;
+bool LandscapeAlgorithm::isValidType(const std::string &type) {
+    return type == diamond_square || type == hill_algorithm || type == perlin_noise || type == cellular_automata;
 }
 
 std::string LandscapeAlgorithm::setOutFileName(const std::string &name) {
@@ -189,47 +175,7 @@ void LandscapeAlgorithm::setGenerations(int generations) {
     this->generations = generations;
 }
 
-#define PARSE_INT(desc, func) \
-    if (strcmp(argv[i], desc) == 0) { \
-        func(atoi(argv[++i])); \
-        continue; \
-    }
-
-#define PARSE_FLOAT(desc, func) \
-    if (strcmp(argv[i], desc) == 0) { \
-        func(static_cast<float>(atof(argv[++i]))); \
-        continue; \
-    }
-
-#define PARSE_STRING(desc, func) \
-    if (strcmp(argv[i], desc) == 0) { \
-        func(argv[++i]); \
-        continue; \
-    }
-
-int main(int argc, char **argv) {
-    LandscapeAlgorithm alg;
-    for (int i = 0; i < argc; i++) {
-        PARSE_STRING("--algorithm", alg.setType);
-        PARSE_STRING("--output", alg.setOutFileName);
-        PARSE_INT("--size", alg.setMapSize);
-        PARSE_INT("--islands", alg.setNumberOfIslands);
-        PARSE_INT("--islandSize", alg.setIslandSize);
-        PARSE_INT("--seed", alg.setRandomSeed);
-        PARSE_INT("--height", alg.setStartHeight);
-        PARSE_INT("--gens", alg.setGenerations);
-        PARSE_INT("--rivers_number", setRiversCount);
-        PARSE_FLOAT("--roughness", alg.setRoughness);
-        PARSE_FLOAT("--out_height", alg.setOutHeight);
-        PARSE_FLOAT("--amplitude", alg.setAmplitude);
-        PARSE_FLOAT("--persistence", alg.setPersistence);
-        PARSE_FLOAT("--frequency", alg.setFrequency);
-        if (strcmp(argv[i], "--noise") == 0) {
-            alg.setHillNoise(1);
-            continue;
-        }
-    }
-    alg.generateLandscape();
-    alg.printLandscape();
-    return 0;
+void LandscapeAlgorithm::setRiversCount(int count) {
+    if (count >= 0)
+        rivers_number = count;
 }

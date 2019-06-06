@@ -29,12 +29,13 @@ SOURCES += \
     cellular_automata.cpp \
     diamond_square.cpp \
     hill_algorithm.cpp \
-    landscape.cpp \
     perlin_noise.cpp \
     rivers_generator.cpp \
     binary_heap.cpp \
     mapfield.cpp \
-    node.cpp
+    node.cpp \
+    main.cpp \
+    landscape.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
