@@ -7,7 +7,7 @@
 
 static std::vector<std::vector<int>> rivers;
 
-//TODO: rewrite it. Make class?
+//TODO: rewrite it.
 
 inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
     //return true if landscape[x][y] is water and set finish point for river
@@ -65,7 +65,7 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
     rivers.push_back(river);
 }
 
-int neighbourWater(landscapeCell *landscape, int fullSize, int mapSize, int index) {
+int getNeighbourWaterCount(landscapeCell *landscape, int fullSize, int mapSize, int index) {
     int sum = 0;
     if (index + 1 < fullSize && landscape[index + 1] == 0)
         sum++;
@@ -79,6 +79,7 @@ int neighbourWater(landscapeCell *landscape, int fullSize, int mapSize, int inde
 }
 
 int calcWidth(int maxwidth, int length) {
+    //calculate river's width depending it's length and max possible width
     int newWidth = length/50;
     newWidth = newWidth > maxwidth ? maxwidth : newWidth;
     return newWidth <= 1 ? 1 : newWidth;
@@ -102,22 +103,24 @@ void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
     std::vector<int> highlands;
     int len = mapSize*mapSize;
     int *tempMap = new int [len];
-    double average = 0.0, factor = 0.3;
+    double average = 0.0, factor = 0.3; //TODO: what are average and factor?
+    //find highlands:
     for (int i = 0; i < len; i++) {
         tempMap[i] = landscape[i] > 0 ? landscape[i] : blockedCell;
         if (landscape[i] > 0)
             highlands.push_back(i);
     }
-    int highlandsSize = highlands.size();
+    int highlandsSize = static_cast<int>(highlands.size());
     if (highlandsSize == 0) {
         delete [] tempMap;
         return;
     }
     for (int i = 0; i < highlandsSize; i++)
-        average += (double)landscape[highlands[i]]/highlandsSize;
+        average += static_cast<double>(landscape[highlands[i]])/highlandsSize;
     average *= factor;
+    //Generate rivers:
     mapField m(mapSize, tempMap);
-    while (number > 0) {
+    while (number-- > 0) {
         int start = -1, finish = -1, dist, count = 0;
         do {
             start = highlands[rand()%highlandsSize];
@@ -126,29 +129,30 @@ void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
                 break;
         } while (landscape[start] < average || dist < length || landscape[finish] > landscape[start]);
         generateRiverAstar(landscape, mapSize, m, start, finish);
-        number--;
     }
+    //Rivers generation finished
     std::vector<int> intersections, widths;
     for (int i = 0; i < rivers.size(); i++)
         for (int j = 0; j < rivers[i].size(); j++) {
             int index = rivers[i][j];
-            if (neighbourWater(landscape, len, mapSize, index) > 2) {
+            if (getNeighbourWaterCount(landscape, len, mapSize, index) > 2) {
                 intersections.push_back(index);
                 widths.push_back(calcWidth(width, findRiverLength(rivers, index, i)));
             }
         }
+    //TODO: how does it work?
     for (int i = 0; i < rivers.size(); i++) {
         length = rivers[i].size();
         int size = 1, halfsize = 0, totalLength = mapSize*mapSize;
         int newWidth = calcWidth(width, length);
-        for (int j = 0; j < length; j++) { //TODO: Should river change landscape?
+        for (int j = 0; j < length; j++) {
             int index = rivers[i][j], nextIndex = rivers[i][j + 1];
             if (j == length - 1)
                 nextIndex = rivers[i][j - 1];
             if (size < newWidth) {
                 if(j == size*length/newWidth)
                     halfsize = ++size/2;
-                int intersectionIndex = getVectorIndex (intersections, index);
+                int intersectionIndex = getVectorIndex(intersections, index);
                 if (intersectionIndex != -1) {
                     size += widths[intersectionIndex];
                     halfsize = size/2;

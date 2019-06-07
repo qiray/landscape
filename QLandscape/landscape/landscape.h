@@ -29,6 +29,8 @@ class LandscapeAlgorithm {
     int generations;
     int rivers_number, river_length, river_width;
     bool isValidType(const std::string&);
+    void makeHillNoise(float *heights, int heightsLength);
+    void applyHeightsToLandscape(float *heights, int length);
 public:
     LandscapeAlgorithm();
     ~LandscapeAlgorithm();

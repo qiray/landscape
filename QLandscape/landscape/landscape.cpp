@@ -141,6 +141,27 @@ inline int nearestPower2(int n) {
     return i;
 }
 
+void LandscapeAlgorithm::makeHillNoise(float *heights, int heightsLength) {
+    float *heights2 = new float [heightsLength];
+    PerlinNoise(heights2, mapSize + 1, minMaxRandom(static_cast<float>(M_PI*2*10), static_cast<float>(M_PI*3*10)), 1, 0.25, 60.0f/mapSize, 0.1f);
+    for (int i = 0; i < heightsLength; i++)
+        heights[i] += heights2[i];
+    delete [] heights2;
+}
+
+void LandscapeAlgorithm::applyHeightsToLandscape(float *heights, int length) {
+    for (int i = 0; i < length; i++) {
+        int tmp = static_cast<int>(roundf((
+             heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
+             heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
+        if (tmp > MAX_LANDSCAPE_CELL)
+            tmp = MAX_LANDSCAPE_CELL;
+        else if (tmp < -MAX_LANDSCAPE_CELL)
+            tmp = -MAX_LANDSCAPE_CELL;
+        landscape[i] = static_cast<landscapeCell>(tmp);
+    }
+}
+
 void LandscapeAlgorithm::generateLandscape() {
     int length = mapSize*mapSize;
     int heightsLength = (mapSize + 1)*(mapSize + 1);
@@ -148,25 +169,15 @@ void LandscapeAlgorithm::generateLandscape() {
     int size = mapSize/((numberOfIslands & (numberOfIslands - 1)) == 0 ? numberOfIslands : nearestPower2(numberOfIslands));
     if (type == hill_algorithm) {
         Hill_algorithm(heights, mapSize + 1, numberOfIslands, roughness, mapSize, mapSize > 128 ? mapSize/5 : 50, MAX_LANDSCAPE_CELL*4);
-        if (hillNoise) {
-            float *heights2 = new float [heightsLength];
-            PerlinNoise(heights2, mapSize + 1, minMaxRandom(static_cast<float>(M_PI*2*10), static_cast<float>(M_PI*3*10)), 1, 0.25, 60.0f/mapSize, 0.1f);
-            for (int i = 0; i < heightsLength; i++)
-                heights[i] += heights2[i];
-            delete [] heights2;
-        }
+        if (hillNoise)
+            makeHillNoise(heights, heightsLength);
     } else if (type == perlin_noise) {
         PerlinNoise(heights, mapSize + 1, minMaxRandom(static_cast<float>(M_PI*2*10), static_cast<float>(M_PI*3*10)), 5, persistence, frequency, amplitude);
     } else if (type == cellular_automata) {
         CellularAutomaton(heights, mapSize + 1, generations);
     } else //default
         generateDiamondSquareHeights(heights, mapSize + 1, startHeight, roughness, size, outHeight, 0, 0, mapSize, mapSize);
-    for (int i = 0; i < length; i++) {
-        int tmp = static_cast<int>(roundf((
-             heights[i + i/mapSize] + heights[i + i/mapSize + 1] +
-             heights[i + i/mapSize + mapSize + 1] + heights[i + i/mapSize + mapSize + 2])/4)); //average value
-        landscape[i] = static_cast<landscapeCell>(tmp > MAX_LANDSCAPE_CELL ? MAX_LANDSCAPE_CELL : tmp < -MAX_LANDSCAPE_CELL ? -MAX_LANDSCAPE_CELL : tmp);
-    }
+    applyHeightsToLandscape(heights, length);
     delete [] heights;
     generateRivers(rivers_number, river_length, river_width);
 }

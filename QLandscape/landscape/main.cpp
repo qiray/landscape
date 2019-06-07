@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include "landscape.h"
 
-//TODO: refactoring
 //TODO: readme
 
 #define PARSE_INT(desc, func) \
