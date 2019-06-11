@@ -5,11 +5,14 @@
 #include <algorithm>
 #include "rivers_generator.h"
 
-static std::vector<std::vector<int>> rivers;
+inline int getVectorIndex (const std::vector<int>&array, int value) {
+    auto it = std::find(array.begin(), array.end(), value);
+    if (it == array.end())
+        return -1;
+    return static_cast<int>(std::distance(array.begin(), it));
+}
 
-//TODO: rewrite it.
-
-inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
+inline bool RiverGenerator::isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &finish) {
     //return true if landscape[x][y] is water and set finish point for river
     if (x < 0 || y < 0 || x >= mapSize || y >= mapSize)
         return false;
@@ -28,7 +31,7 @@ inline bool isWater(landscapeCell *landscape, int mapSize, int x, int y,  int &f
     return false;
 }
 
-inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {
+inline int RiverGenerator::distanceToWater(landscapeCell *landscape, int mapSize, int start, int &finish, int step) {
     //get distance to nearest water point or -1 if fail
     int dist = 1, x = start%mapSize, y = start/mapSize;
     while(1) {
@@ -44,7 +47,7 @@ inline int distanceToWater(landscapeCell *landscape, int mapSize, int start, int
     }
 }
 
-inline float roughnessByLength(int mapSize, int start, int finish) {
+inline float RiverGenerator::roughnessByLength(int mapSize, int start, int finish) {
     int len = abs(start%mapSize - finish%mapSize) + abs(start/mapSize - finish/mapSize);
     if (len <= 64)
         return 0.5f;
@@ -53,7 +56,7 @@ inline float roughnessByLength(int mapSize, int start, int finish) {
     return 0.02f;
 }
 
-void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
+void RiverGenerator::generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int start, int finish) {
     std::vector<int> river;
     node startNode(static_cast<unsigned short>(start%mapSize), static_cast<unsigned short>(start/mapSize), nullptr);
     node finishNode(static_cast<unsigned short>(finish%mapSize), static_cast<unsigned short>(finish/mapSize), nullptr);
@@ -65,7 +68,7 @@ void generateRiverAstar(landscapeCell *landscape, int mapSize, mapField &m, int 
     rivers.push_back(river);
 }
 
-int getNeighbourWaterCount(landscapeCell *landscape, int fullSize, int mapSize, int index) {
+int RiverGenerator::getNeighbourWaterCount(landscapeCell *landscape, int fullSize, int mapSize, int index) {
     int sum = 0;
     if (index + 1 < fullSize && landscape[index + 1] == 0)
         sum++;
@@ -78,33 +81,30 @@ int getNeighbourWaterCount(landscapeCell *landscape, int fullSize, int mapSize, 
     return sum;
 }
 
-int calcWidth(int maxwidth, int length) {
+int RiverGenerator::calcWidth(int maxwidth, int length) {
     //calculate river's width depending it's length and max possible width
     int newWidth = length/50;
     newWidth = newWidth > maxwidth ? maxwidth : newWidth;
     return newWidth <= 1 ? 1 : newWidth;
 }
 
-inline int getVectorIndex (const std::vector<int>&array, int value) {
-    auto it = std::find(array.begin(), array.end(), value);
-    if (it == array.end())
-        return -1;
-    return static_cast<int>(std::distance(array.begin(), it));
-}
-
-inline int findRiverLength(const std::vector<std::vector<int>> &rivers, int index, int notThisRiver) {
+inline int RiverGenerator::findRiverLength(const std::vector<std::vector<int>> &rivers, int index, int notThisRiver) {
     for (size_t i = 0; i < rivers.size(); i++)
         if (i != notThisRiver && getVectorIndex (rivers[i], index) != -1)
             return rivers[i].size();
     return rivers[notThisRiver].size();
 }
 
-void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
+RiverGenerator::RiverGenerator() {
+    std::vector<std::vector<int>> rivers;
+}
+
+void RiverGenerator::makeRivers(int number, int length, landscapeCell *landscape, int mapSize) {
     std::vector<int> highlands;
     int len = mapSize*mapSize;
     int *tempMap = new int [len];
     double average = 0.0, factor = 0.3; //TODO: what are average and factor?
-    //find highlands:
+    //Find highlands:
     for (int i = 0; i < len; i++) {
         tempMap[i] = landscape[i] > 0 ? landscape[i] : blockedCell;
         if (landscape[i] > 0)
@@ -120,6 +120,7 @@ void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
     average *= factor;
     //Generate rivers:
     mapField m(mapSize, tempMap);
+    delete [] tempMap;
     while (number-- > 0) {
         int start = -1, finish = -1, dist, count = 0;
         do {
@@ -130,7 +131,10 @@ void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
         } while (landscape[start] < average || dist < length || landscape[finish] > landscape[start]);
         generateRiverAstar(landscape, mapSize, m, start, finish);
     }
-    //Rivers generation finished
+}
+
+void RiverGenerator::landscapeInfluence(int width, landscapeCell *landscape, int mapSize) {
+    int len = mapSize*mapSize;
     std::vector<int> intersections, widths;
     for (int i = 0; i < rivers.size(); i++)
         for (int j = 0; j < rivers[i].size(); j++) {
@@ -140,9 +144,9 @@ void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
                 widths.push_back(calcWidth(width, findRiverLength(rivers, index, i)));
             }
         }
-    //TODO: how does it work?
+    //How does it work?
     for (int i = 0; i < rivers.size(); i++) {
-        length = rivers[i].size();
+        int length = rivers[i].size();
         int size = 1, halfsize = 0, totalLength = mapSize*mapSize;
         int newWidth = calcWidth(width, length);
         for (int j = 0; j < length; j++) {
@@ -168,5 +172,9 @@ void LandscapeAlgorithm::generateRivers(int number, int length, int width) {
                     landscape[k] = 0;
         }
     }
-    delete [] tempMap;
+}
+
+void RiverGenerator::generateRivers(int number, int length, int width, landscapeCell *landscape, int mapSize) {
+    makeRivers(number, length, landscape, mapSize);
+    landscapeInfluence(width, landscape, mapSize);
 }

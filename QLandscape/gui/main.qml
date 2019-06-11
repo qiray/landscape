@@ -126,7 +126,7 @@ ApplicationWindow {
         anchors.left: mapRect.right
         anchors.right: parent.right
         anchors.top: parent.top
-        color: "#AAAAAA"
+        color: "#DDDDDD"
 
         Text {
             anchors.top: parent.top

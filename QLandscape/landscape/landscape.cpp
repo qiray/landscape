@@ -162,6 +162,11 @@ void LandscapeAlgorithm::applyHeightsToLandscape(float *heights, int length) {
     }
 }
 
+void LandscapeAlgorithm::generateRivers(int rivers_number, int river_length, int river_width) {
+    RiverGenerator rg;
+    rg.generateRivers(rivers_number, river_length, river_width, landscape, mapSize);
+}
+
 void LandscapeAlgorithm::generateLandscape() {
     int length = mapSize*mapSize;
     int heightsLength = (mapSize + 1)*(mapSize + 1);

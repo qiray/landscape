@@ -3,7 +3,7 @@
 
 #define CELLULAR_AUTOMATON_H
 
-extern float minMaxRandom(float min, float max);
+#include "landscape.h"
 
 void CellularAutomaton(float *heights, int mapSize, int gens);
 

@@ -12,6 +12,8 @@ typedef char landscapeCell;
 #define MINOR_VERSION 0
 #define BUILD_VERSION 1
 
+float minMaxRandom(float min, float max);
+
 class LandscapeAlgorithm {
     static const std::string diamond_square;
     static const std::string hill_algorithm;
