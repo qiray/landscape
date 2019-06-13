@@ -1,3 +1,4 @@
+#include <iostream>
 #include <cstring>
 #include <cstdlib>
 #include "landscape.h"
@@ -25,6 +26,10 @@
 int main(int argc, char **argv) {
     LandscapeAlgorithm alg;
     for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "--version") == 0) {
+            std::cout << "Landscape generator v " << getVersion() << std::endl;
+            return 0;
+        }
         PARSE_STRING("--algorithm", alg.setType);
         PARSE_STRING("--output", alg.setOutFileName);
         PARSE_INT("--size", alg.setMapSize);

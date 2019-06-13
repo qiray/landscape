@@ -103,7 +103,7 @@ void RiverGenerator::makeRivers(int number, int length, landscapeCell *landscape
     std::vector<int> highlands;
     int len = mapSize*mapSize;
     int *tempMap = new int [len];
-    double average = 0.0, factor = 0.3; //TODO: what are average and factor?
+    double averageHeight = 0.0, factor = 0.3;
     //Find highlands:
     for (int i = 0; i < len; i++) {
         tempMap[i] = landscape[i] > 0 ? landscape[i] : blockedCell;
@@ -116,8 +116,8 @@ void RiverGenerator::makeRivers(int number, int length, landscapeCell *landscape
         return;
     }
     for (int i = 0; i < highlandsSize; i++)
-        average += static_cast<double>(landscape[highlands[i]])/highlandsSize;
-    average *= factor;
+        averageHeight += static_cast<double>(landscape[highlands[i]])/highlandsSize;
+    averageHeight *= factor;
     //Generate rivers:
     mapField m(mapSize, tempMap);
     delete [] tempMap;
@@ -128,7 +128,7 @@ void RiverGenerator::makeRivers(int number, int length, landscapeCell *landscape
             dist = distanceToWater(landscape, mapSize, start, finish, 1);
             if (count++ > 50)
                 break;
-        } while (landscape[start] < average || dist < length || landscape[finish] > landscape[start]);
+        } while (landscape[start] < averageHeight || dist < length || landscape[finish] > landscape[start]);
         generateRiverAstar(landscape, mapSize, m, start, finish);
     }
 }

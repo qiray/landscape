@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include <vector>
 
 #ifndef LANDSCAPE_H
@@ -8,9 +9,11 @@
 typedef char landscapeCell;
 #define MAX_LANDSCAPE_CELL 127
 
-#define MAJOR_VERSION 0 //TODO: use version
+#define MAJOR_VERSION 0
 #define MINOR_VERSION 0
 #define BUILD_VERSION 1
+
+std::string getVersion();
 
 float minMaxRandom(float min, float max);
 

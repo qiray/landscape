@@ -117,8 +117,12 @@ ApplicationWindow {
                 topMargin: 40
             }
             source: ""
-
-            //TODO: save map as image
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    exec.runBinary('landscape', makeArguments());
+                }
+            }
         }
     }
     Rectangle {
@@ -302,6 +306,18 @@ ApplicationWindow {
                 exec.runBinary('landscape', makeArguments());
             }
         }
+        Button {
+            anchors.top: parent.top
+            anchors.topMargin: 255
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            width: parent.width - 10
+            height: 30
+            text: "Save map as image"
+            onClicked: {
+                saveMapAsImage();
+            }
+        }
     }
 
     onClosing: {
@@ -374,6 +390,12 @@ ApplicationWindow {
         //TODO: draw different size maps
         var imageBase64 = drawMap.generateMapFromFile(mapFileText.text)
         mapImage.source = "data:image/png;base64," + imageBase64
+    }
+
+    function saveMapAsImage() {
+        mapImage.grabToImage(function(result) {
+                               result.saveToFile("output.png");//TODO: select output name
+                           });
     }
 
 }

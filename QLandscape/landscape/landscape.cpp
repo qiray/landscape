@@ -13,6 +13,12 @@ const std::string LandscapeAlgorithm::hill_algorithm = "hill_algorithm";
 const std::string LandscapeAlgorithm::perlin_noise = "perlin_noise";
 const std::string LandscapeAlgorithm::cellular_automata = "cellular_automata";
 
+std::string getVersion() {
+    std::stringstream ss;
+    ss << MAJOR_VERSION << '.' << MINOR_VERSION << '.' << BUILD_VERSION;
+    return ss.str();
+}
+
 LandscapeAlgorithm::LandscapeAlgorithm() {
     srand(static_cast<unsigned int>(time(nullptr)));
     //default values
