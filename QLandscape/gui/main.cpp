@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QIcon>
 #include "fileio.h"
 #include "drawmap.h"
 #include "executebinary.h"
@@ -8,6 +9,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/icon.ico"));
     qmlRegisterType<FileIO>("FileIO", 1, 0, "FileIO");
     qmlRegisterType<DrawMap>("DrawMap", 1, 0, "DrawMap");
     qmlRegisterType<ExecuteBinary>("ExecuteBinary", 1, 0, "ExecuteBinary");

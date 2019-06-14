@@ -10,8 +10,6 @@ import FileIO 1.0
 import DrawMap 1.0
 import ExecuteBinary 1.0
 
-//TODO: icon
-
 ApplicationWindow {
     property int windowWidth: 800
     property int windowHeight: 600
@@ -66,8 +64,20 @@ ApplicationWindow {
             path = path.replace(/^(file:\/{2})/,"")
             mapFileText.text = path
         }
-        onRejected: {
-            console.log("Canceled")
+    }
+
+    FileDialog {
+        id: saveFileDialog
+        title: qsTr("Save file")
+        selectExisting: false
+        selectMultiple: false
+        nameFilters: [ "Image files (*.jpg *.png)" ]
+        onAccepted: {
+            var path = this.fileUrl.toString()
+            path = path.replace(/^(file:\/{2})/,"")
+            mapImage.grabToImage(function(result) {
+                result.saveToFile(path);
+            });
         }
     }
 
@@ -393,9 +403,7 @@ ApplicationWindow {
     }
 
     function saveMapAsImage() {
-        mapImage.grabToImage(function(result) {
-                               result.saveToFile("output.png");//TODO: select output name
-                           });
+        saveFileDialog.open()
     }
 
 }

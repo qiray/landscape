@@ -38,3 +38,4 @@ HEADERS += \
     drawmap.h \
     executebinary.h
 
+DISTFILES +=

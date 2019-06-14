@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>style/RightTextField.qml</file>
         <file>style/LeftText.qml</file>
+        <file>icon.ico</file>
     </qresource>
 </RCC>
