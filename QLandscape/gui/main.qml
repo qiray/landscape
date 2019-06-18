@@ -10,6 +10,8 @@ import FileIO 1.0
 import DrawMap 1.0
 import ExecuteBinary 1.0
 
+//TODO: add about info
+
 ApplicationWindow {
     property int windowWidth: 800
     property int windowHeight: 600
@@ -46,6 +48,10 @@ ApplicationWindow {
             MenuItem {
                 text: qsTr("Open map")
                 onTriggered: fileDialog.open()
+            }
+            MenuItem {
+                text: qsTr("Save map as image")
+                onTriggered: saveMapAsImage()
             }
             MenuItem {
                 text: qsTr("Close app")
@@ -161,9 +167,9 @@ ApplicationWindow {
             currentIndex: 0
             model: ListModel {
                 id: cbItems
-                ListElement { text: "Diamond square"; value: "0"; name: 'diamond_square' }
-                ListElement { text: "Hill algorithm"; value: "1"; name: 'hill_algorithm' }
-                ListElement { text: "Perlin noise"; value: "2"; name: 'perlin_noise' }
+                ListElement { text: qsTr("Diamond square"); value: "0"; name: 'diamond_square' }
+                ListElement { text: qsTr("Hill algorithm"); value: "1"; name: 'hill_algorithm' }
+                ListElement { text: qsTr("Perlin noise"); value: "2"; name: 'perlin_noise' }
             }
             width: 150
             height: 20
@@ -311,7 +317,7 @@ ApplicationWindow {
             anchors.leftMargin: 5
             width: parent.width - 10
             height: 30
-            text: "Generate map"
+            text: qsTr("Generate map")
             onClicked: {
                 exec.runBinary('landscape', makeArguments());
             }
@@ -323,7 +329,7 @@ ApplicationWindow {
             anchors.leftMargin: 5
             width: parent.width - 10
             height: 30
-            text: "Save map as image"
+            text: qsTr("Save map as image")
             onClicked: {
                 saveMapAsImage();
             }
