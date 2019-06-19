@@ -14,6 +14,7 @@ typedef char landscapeCell;
 #define BUILD_VERSION 1
 
 std::string getVersion();
+std::string getAboutInfo();
 
 float minMaxRandom(float min, float max);
 

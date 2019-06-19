@@ -17,6 +17,7 @@ public slots:
 
 signals:
     void error(const QString& msg);
+    void getOutput(const QString& msg);
     void finish();
 private:
     QProcess* process;

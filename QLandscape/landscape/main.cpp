@@ -3,8 +3,6 @@
 #include <cstdlib>
 #include "landscape.h"
 
-//TODO: readme
-
 #define PARSE_INT(desc, func) \
     if (strcmp(argv[i], desc) == 0) { \
         func(atoi(argv[++i])); \
@@ -28,6 +26,10 @@ int main(int argc, char **argv) {
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "--version") == 0) {
             std::cout << "Landscape generator v " << getVersion() << std::endl;
+            return 0;
+        }
+        if (strcmp(argv[i], "--about") == 0) {
+            std::cout << "Landscape generator v " << getVersion() << std::endl << getAboutInfo();
             return 0;
         }
         PARSE_STRING("--algorithm", alg.setType);

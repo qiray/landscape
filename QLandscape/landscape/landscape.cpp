@@ -19,6 +19,12 @@ std::string getVersion() {
     return ss.str();
 }
 
+std::string getAboutInfo() {
+    return std::string("Copyright (C) 2015-2019 Yaroslav Zotov.\n") +
+        "This program comes with ABSOLUTELY NO WARRANTY.\n" +
+        "This is free software under MIT license; see the source for copying conditions\n";
+}
+
 LandscapeAlgorithm::LandscapeAlgorithm() {
     srand(static_cast<unsigned int>(time(nullptr)));
     //default values

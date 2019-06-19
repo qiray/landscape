@@ -1,6 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
@@ -10,13 +10,12 @@ import FileIO 1.0
 import DrawMap 1.0
 import ExecuteBinary 1.0
 
-//TODO: add about info
-
 ApplicationWindow {
     property int windowWidth: 800
     property int windowHeight: 600
     id: mainWindow
     property string settingsPath: "settings.cfg"
+    property int action: 0
     visible: true
     width: windowWidth
     minimumWidth: windowWidth
@@ -25,6 +24,12 @@ ApplicationWindow {
     minimumHeight: windowHeight
     maximumHeight: windowHeight
     title: qsTr("Landscape GUI")
+
+    MessageDialog {
+        id: messageBox
+        title: qsTr("About")
+        text: ""
+    }
 
     FileIO {
         id: fileIO
@@ -39,7 +44,11 @@ ApplicationWindow {
     ExecuteBinary {
         id: exec
         onError: console.log(msg)
-        onFinish: redrawMap()
+        onFinish: {
+            if (action)
+                redrawMap()
+        }
+        onGetOutput: messageBox.text = msg
     }
 
     menuBar: MenuBar {
@@ -47,14 +56,22 @@ ApplicationWindow {
             title: qsTr("File")
             MenuItem {
                 text: qsTr("Open map")
+                shortcut: StandardKey.Open
                 onTriggered: fileDialog.open()
             }
             MenuItem {
                 text: qsTr("Save map as image")
+                shortcut: StandardKey.Save
                 onTriggered: saveMapAsImage()
             }
             MenuItem {
+                text: qsTr("About")
+                 shortcut: "Ctrl+A"
+                onTriggered: showAboutInfo()
+            }
+            MenuItem {
                 text: qsTr("Close app")
+                shortcut: StandardKey.Close
                 onTriggered: Qt.quit()
             }
         }
@@ -135,9 +152,7 @@ ApplicationWindow {
             source: ""
             MouseArea {
                 anchors.fill: parent
-                onClicked: {
-                    exec.runBinary('landscape', makeArguments());
-                }
+                onClicked: generateMap()
             }
         }
     }
@@ -318,9 +333,7 @@ ApplicationWindow {
             width: parent.width - 10
             height: 30
             text: qsTr("Generate map")
-            onClicked: {
-                exec.runBinary('landscape', makeArguments());
-            }
+            onClicked: generateMap()
         }
         Button {
             anchors.top: parent.top
@@ -410,6 +423,17 @@ ApplicationWindow {
 
     function saveMapAsImage() {
         saveFileDialog.open()
+    }
+
+    function showAboutInfo() {
+        action = 0
+        exec.runBinary('landscape', "--about");
+        messageBox.visible = true
+    }
+
+    function generateMap() {
+        action = 1
+        exec.runBinary('landscape', makeArguments());
     }
 
 }

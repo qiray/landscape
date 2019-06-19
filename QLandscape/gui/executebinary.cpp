@@ -15,8 +15,10 @@ void ExecuteBinary::processFinished(int exitCode, QProcess::ExitStatus exitStatu
     if (exitCode)
         qDebug() << exitCode << " " << exitStatus;
     auto standardOutput = process->readAllStandardOutput();
-    if (!standardOutput.isEmpty())
+    if (!standardOutput.isEmpty()) {
+        emit getOutput(standardOutput);
         qDebug() << standardOutput;
+    }
     auto standardError = process->readAllStandardError();
     if (!standardError.isEmpty())
         emit error(standardError);
