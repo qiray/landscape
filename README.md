@@ -25,7 +25,6 @@ Open [QLandscape.pro](QLandscape/QLandscape.pro) with Qt Creator, set up environ
 ## Usage
 
 It is recommended to use GUI app with intuitive interface but you can also use console 'landscape' app. It has some flags which you can see in [source code](QLandscape/landscape/main.cpp).
-<!-- TODO: add flags -->
 
 ## License
 
