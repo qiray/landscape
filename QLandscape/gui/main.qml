@@ -358,7 +358,7 @@ ApplicationWindow {
 
     function makeArguments() {
         var result = ['--size', '512', '--noise', '--output', mapFileText.text, '--algorithm', cbItems.get(algorithmSelector.currentIndex).name]
-        if (seedText.text != '') {
+        if (seedText.text !== '') {
             result.push('--seed', seedText.text)
         } else {
             result.push('--seed', + new Date())
@@ -418,7 +418,8 @@ ApplicationWindow {
     function redrawMap() {
         //TODO: draw different size maps
         var imageBase64 = drawMap.generateMapFromFile(mapFileText.text)
-        mapImage.source = "data:image/png;base64," + imageBase64
+        if (imageBase64)
+            mapImage.source = "data:image/png;base64," + imageBase64
     }
 
     function saveMapAsImage() {
